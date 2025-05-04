@@ -12,8 +12,8 @@ using namespace sjtu;
 template<class KEY,class OTHER,int M = 50,int L = 50> //我需要M L是偶数
 class BPT {
 private:
-    std::fstream indexTree;//索引块  前2个int大小的块存nextIndexPos和 root.pos 先后顺序就是这个
-    std::fstream leaf;//数据块 前2个int大小的块存nextLeafPos和 FirstLeaf.Pos 先后顺序就是这个
+    std::fstream indexTree;//索引块
+    std::fstream leaf;//数据块
     std::string indexTree_name;
     std::string leaf_name;
 
@@ -28,7 +28,8 @@ private:
         }
         return ++nextIndexNodePos;
     }
-    int allocateLeadfPos() {
+
+    int allocateLeafPos() {
         if(!freeLeafPos.empty()) {
             int pos = freeLeafPos.back();
             freeLeafPos.pop_back();
@@ -368,7 +369,7 @@ private:
         newLeaf.num = mid;
         current.num = mid;
         //newLeaf.pos = ++ nextLeafNodePos;
-        newLeaf.pos = allocateLeadfPos();
+        newLeaf.pos = allocateLeafPos();
         for(int i = above.keyNum + 1;i > idx + 1;i --) {
             above.ChildPointer[i] = above.ChildPointer[i - 1];
         }
