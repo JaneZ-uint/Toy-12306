@@ -12,14 +12,15 @@ using namespace sjtu;
 template<class KEY,class OTHER,int M = 50,int L = 50> //我需要M L是偶数
 class BPT {
 private:
-    std::fstream indexTree;//索引块
-    std::fstream leaf;//数据块
+    std::fstream indexTree;//索引块  前2个int大小的块存nextIndexPos和 root.pos 先后顺序就是这个
+    std::fstream leaf;//数据块 前2个int大小的块存nextLeafPos和 FirstLeaf.Pos 先后顺序就是这个
     std::string indexTree_name;
     std::string leaf_name;
 
     sjtu::vector<int> freeIndexPos;
     sjtu::vector<int> freeLeafPos;
 
+    //空间回收
     int allocateIndexPos(){
         if(!freeIndexPos.empty()) {
             int pos = freeIndexPos.back();
@@ -41,6 +42,7 @@ private:
     void releaseIndexPos(int pos) {
         freeIndexPos.push_back(pos);
     }
+
     void releaseLeafPos(int pos) {
         freeLeafPos.push_back(pos);
     }
@@ -87,9 +89,8 @@ private:
         bool is_leaf = false;
         int keyNum;//关键字数量
         int pos;//当前结点在disk上的位置
-        KO Key[M + 1];//注意：这里必须存键值对，因为可能存在一个键值对应多个value的情况
-        int ChildPointer[M + 1];//磁盘位置
-
+        KO Key[M + 5];//注意：这里必须存键值对，因为可能存在一个键值对应多个value的情况
+        int ChildPointer[M + 5];//磁盘位置
     };
 
     struct LeafNode {
@@ -102,11 +103,12 @@ private:
     };
 
     IndexNode root;
+    LeafNode Data;
     int totalNum = 0;
     int nextIndexNodePos;
     int nextLeafNodePos;
 
-    //添加LRU Cache
+    //缓存
     LRUCache<int,IndexNode> IndexCache;
     LRUCache<int,LeafNode> LeafCache;
 
@@ -114,6 +116,7 @@ private:
         indexTree.open(indexTree_name,std::ios::binary | std::ios::in | std::ios::out);
         leaf.open(leaf_name,std::ios::binary | std::ios::in | std::ios::out);
     }
+
     void closeFile() {
         indexTree.close();
         leaf.close();
@@ -448,7 +451,7 @@ private:
         current.num += L/2;
         current.next = nextLeaf.next;
         LeafCache.erase(nextLeaf.pos);//修改缓存
-        releaseLeafPos(nextLeaf.pos);//空间回收
+        releaseLeafPos(nextLeaf.pos);
         writeLeafNode(current);
         for(int i = idx;i < above.keyNum - 1;i ++) {
             above.Key[i] = above.Key[i + 1];
@@ -457,7 +460,7 @@ private:
             above.ChildPointer[i] = above.ChildPointer[i + 1];
         }
         above.keyNum --;
-        if(above.keyNum < M/2 + 1) {
+        if(above.keyNum + 1 < M/2) {
             a = true;
         }else {
             writeIndexNode(above);
@@ -472,7 +475,7 @@ private:
         beforeLeaf.num += L/2 - 1;
         beforeLeaf.next = current.next;
         LeafCache.erase(current.pos);
-        releaseLeafPos(current.pos);//空间回收
+        releaseLeafPos(current.pos);
         writeLeafNode(beforeLeaf);
         for(int i = idx - 1;i < above.keyNum - 1;i ++) {
             above.Key[i] = above.Key[i + 1];
@@ -481,7 +484,7 @@ private:
             above.ChildPointer[i] = above.ChildPointer[i + 1];
         }
         above.keyNum --;
-        if(above.keyNum < M/2 + 1) {
+        if(above.keyNum + 1< M/2 ) {
             a = true;
         }else {
             writeIndexNode(above);
@@ -506,10 +509,9 @@ private:
         }
         above.keyNum --;
         IndexCache.erase(nextIndex.pos);
-        releaseIndexPos(nextIndex.pos);//空间回收
+        releaseIndexPos(nextIndex.pos);
         writeIndexNode(current);
-
-        if(above.keyNum < M/2 + 1) {
+        if(above.keyNum + 1< M/2) {
             a = true;
         }else {
             writeIndexNode(above);
@@ -534,10 +536,9 @@ private:
         }
         above.keyNum --;
         IndexCache.erase(current.pos);
-        releaseIndexPos(current.pos);//空间回收
+        releaseIndexPos(current.pos);
         writeIndexNode(beforeIndex);
-
-        if(above.keyNum < M/2 + 1) {
+        if(above.keyNum + 1< M/2 ) {
             a = true;
         }else {
             writeIndexNode(above);
@@ -639,7 +640,7 @@ private:
             if(idx < current.keyNum) {
                 rightIndex = true;
                 readIndexNode(nextIndex,current.ChildPointer[idx + 1]);
-                if(nextIndex.keyNum + 1 > M/2) {
+                if(nextIndex.keyNum + 1 > M/2 ) {
                     child.Key[child.keyNum] = current.Key[idx];
                     child.ChildPointer[child.keyNum + 1] = nextIndex.ChildPointer[0];
                     current.Key[idx] = nextIndex.Key[0];
@@ -704,7 +705,7 @@ private:
     }
 
 public:
-    BPT(const std::string &s1,const std::string &s2):IndexCache(20000),LeafCache(20000) {
+    BPT(const std::string &s1,const std::string &s2):IndexCache(50000),LeafCache(50000) {
         indexTree_name = s1;
         leaf_name = s2;
         openFile();
