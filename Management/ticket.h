@@ -5,4 +5,8 @@
 #ifndef TICKET_H
 #define TICKET_H
 
+struct TicketInfo {
+
+};
+
 #endif //TICKET_H
