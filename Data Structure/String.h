@@ -18,7 +18,8 @@ namespace JaneZ {
         String() = default;
 
         String(const char* str) {
-            for(size_t i = 0;i < string_length && str[i] != '\0';i ++) {
+            size_t i;
+            for(i = 0;i < string_length && str[i] != '\0';i ++) {
                 data[i] = str[i];
             }
             data[string_length] = '0';

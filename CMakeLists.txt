@@ -13,7 +13,12 @@ add_executable(Toy12306 main.cpp
         Management/ticket.h
         Management/train.cpp
         Management/train.h
-        Tokenscanner/tokenscanner.h
-        Tokenscanner/tokenscanner.cpp
+        Tool/tokenscanner.h
+        Tool/tokenscanner.cpp
         Management/user.cpp
-        Management/user.h)
+        Management/user.h
+        "Data Structure/String.h"
+        Management/time.h
+        Management/time.cpp
+        Tool/HashFunction.h
+        "Data Structure/map.h")
