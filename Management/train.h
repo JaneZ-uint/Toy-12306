@@ -12,15 +12,20 @@
 
 using ull = unsigned long long int;
 
+struct StationInfo {
+    JaneZ::String<42> stationName;
+    int price;
+    int travelTime;
+    int stopoverTime;
+    int freeSeatNum;
+};
+
 struct TrainInfo {
     JaneZ::String<22> trainID;
     int stationNum;
-    sjtu::vector<JaneZ::String<42> > stations;
+    StationInfo stations[102];
     int seatNum;
-    sjtu::vector<int> prices;
     JaneZ::Clock startTime;
-    sjtu::vector<int> travelTimes;
-    sjtu::vector<int> stopoverTimes;
     JaneZ::Date saleStartDate;
     JaneZ::Date saleEndDate;
     char type;

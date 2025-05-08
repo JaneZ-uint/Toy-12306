@@ -7,6 +7,15 @@
 #include "../Data Structure/String.h"
 #include "../Data Structure/vector.h"
 
+/*
+ * This is a class that will never be used.
+ * Silly JaneZ found out that "保证所有指令输入格式均合法" after she completely finished it.
+ * But apparently she doesn't want to delete it.
+ * So here is the graveyard of class TokenScanner.
+ * Let's say :
+ * Great TokenScanner!
+ */
+
 class TokenScanner {
 public:
     static bool checkLetter(char a);

@@ -16,6 +16,17 @@ namespace JaneZ {
 
         Clock(int h,int m);
 
+        Clock &operator=(const Clock &other);
+
+        bool operator==(const Clock &other) const;
+
+        bool operator<(const Clock &other) const;
+
+        bool operator<=(const Clock &other) const;
+
+        bool operator>(const Clock &other) const;
+
+        bool operator>=(const Clock &other) const;
     };
 
     struct Date {
@@ -29,6 +40,28 @@ namespace JaneZ {
 
         Date(int m,int d);
 
+        Date &operator=(const Date &other);
+
+        bool operator==(const Date &other) const;
+
+        bool operator<(const Date &other) const;
+
+        bool operator<=(const Date &other) const;
+
+        bool operator>(const Date &other) const;
+
+        bool operator>=(const Date &other) const;
+
+        Date &operator++();
+    };
+
+    struct TrainTime {
+        Date date;
+        Clock clock;
+
+        TrainTime(Date &d,Clock &c);
+
+        TrainTime &operator+(int m);
     };
 }
 
