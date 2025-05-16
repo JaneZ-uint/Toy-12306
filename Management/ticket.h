@@ -59,10 +59,14 @@ private:
     BPT<ull, TicketInfo> WaitList;
 
 public:
+    TicketSystem():FormalList("FormalListIndex","FormalListLeaf"),WaitList("WaitListIndex","WaitListLeaf"){}
+
+    ~TicketSystem();
+
     BuyState buy_ticket(JaneZ::String<22> &username,
                         JaneZ::String<22> &trainID,
                         JaneZ::Date &day,
-                        int num = 0,
+                        int num,
                         JaneZ::String<42> &startStation,
                         JaneZ::String<42> &endStation,
                         bool waitList = false);
@@ -70,6 +74,16 @@ public:
     void query_order(JaneZ::String<22> &username);
 
     bool refund_ticket(JaneZ::String<22> &username,int n = 1);
+
+    static void clean() {
+        // 删除正式列表的索引和叶子文件
+        std::remove("FormalListIndex");
+        std::remove("FormalListLeaf");
+
+        // 删除等待列表的索引和叶子文件
+        std::remove("WaitListIndex");
+        std::remove("WaitListLeaf");
+    }
 };
 
 #endif //TICKET_H

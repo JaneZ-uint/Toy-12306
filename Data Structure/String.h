@@ -22,7 +22,18 @@ namespace JaneZ {
             for(i = 0;i < string_length && str[i] != '\0';i ++) {
                 data[i] = str[i];
             }
-            data[string_length] = '0';
+            data[string_length] = '\0';
+        }
+
+        String(std::string &s) {
+            size_t i;
+            for(i = 0;i < s.size();i ++) {
+                data[i] = s[i];
+            }
+            for(size_t j = i;j < string_length;j ++) {
+                data[j] = '\0';
+            }
+            data[string_length] = '\0';
         }
 
         char& operator[](size_t index) {

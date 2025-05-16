@@ -9,6 +9,7 @@
 #include "../Data Structure/vector.h"
 #include "../Management/time.h"
 #include "../Tool/HashFunction.h"
+#include "../Tool/tokenSlicer.h"
 
 using ull = unsigned long long int;
 
@@ -65,10 +66,14 @@ private:
     BPT<ull, TrainInfo> ReleasedTrainBase;
 
 public:
+    TrainSystem():TrainBase("TrainBaseIndex","TrainBaseLeaf"),ReleasedTrainBase("ReleasedTrainBaseIndex","ReleasedTrainBaseLeaf"){}
+
+    ~TrainSystem();
+
     bool add_train(JaneZ::String<22> &trainID,
                    int stationNum,
-                   sjtu::vector<JaneZ::String<42> > &stations,
                    int seatNum,
+                   sjtu::vector<JaneZ::String<42> > &stations,
                    sjtu::vector<int> &prices,
                    JaneZ::Clock &startTime,
                    sjtu::vector<int> &travelTimes,
@@ -83,9 +88,19 @@ public:
 
     TB query_train(JaneZ::String<22> &trainID, JaneZ::Date &date);
 
-    void query_ticket(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ::Date &d, int travelTime, int Cost);
+    void query_ticket(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ::Date &d, JaneZ::SortType SortWay);
 
-    void query_transfer(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ::Date &d, int travelTime, int Cost);
+    void query_transfer(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ::Date &d, JaneZ::SortType SortWay);
+
+    static void clean() {
+        // 删除未发布列车数据的索引和叶子文件
+        std::remove("TrainBaseIndex");
+        std::remove("TrainBaseLeaf");
+
+        // 删除已发布列车数据的索引和叶子文件
+        std::remove("ReleasedTrainBaseIndex");
+        std::remove("ReleasedTrainBaseLeaf");
+    }
 };
 
 #endif //TRAIN_H

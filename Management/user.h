@@ -16,10 +16,10 @@ struct UserInfo {
     JaneZ::String<32> password;
     JaneZ::String<22> name;
     JaneZ::String<32> mailAddr;
-    int privilege;
-    ull HashUsername = JaneZ::Hash<22>::HashFunction(username);
+    int privilege = -1;
+    //ull HashUsername = JaneZ::Hash<22>::HashFunction(username);
 
-    UserInfo(): privilege(10) {
+    UserInfo(): privilege(-1) {
     }
 
     UserInfo(const char *u, const char *p, const char *n, const char *m, int pr): username(u), password(p), name(n),
@@ -60,6 +60,10 @@ private:
     sjtu::map<ull, int> LoginStack;
 
 public:
+    UserSystem():UserBase("UserBaseIndex","UserBaseLeaf"){}
+
+    ~UserSystem();
+
     bool add_user(JaneZ::String<22> &currentUsername, JaneZ::String<22> &username, JaneZ::String<32> &password,
                   JaneZ::String<22> &name, JaneZ::String<32> &mailAddr, int privilege);
 
@@ -71,5 +75,11 @@ public:
 
     UB modify_profile(JaneZ::String<22> &currentUsername, JaneZ::String<22> &username, JaneZ::String<32> &password,
                       JaneZ::String<22> &name, JaneZ::String<32> &mailAddr, int privilege);
+
+    static void clean() {
+        // 删除用户数据的索引和叶子文件
+        std::remove("UserBaseIndex");
+        std::remove("UserBaseLeaf");
+    }
 };
 #endif //USER_H

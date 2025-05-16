@@ -5,7 +5,7 @@
 #ifndef MAP_H
 #define MAP_H
 #include "../Data Structure/exceptions.h"
-
+#include "../Data Structure/utility.h"
 namespace sjtu {
     template<class Key,class T,class Compare = std::less<Key> >
     class map {
