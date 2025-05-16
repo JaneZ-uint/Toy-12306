@@ -23,18 +23,35 @@ int main(){
             JaneZ::String<22> name(tmp.name);
             JaneZ::String<32> mail(tmp.mail);
             int privilege = tmp.privilege;
-            user_system.add_user(curUsername,username,password,name,mail,privilege);
+            if(user_system.add_user(curUsername,username,password,name,mail,privilege)) {
+                std::cout << 0 << '\n';
+            }else {
+                std::cout << -1 << '\n';
+            }
         }else if(tmp.a == JaneZ::opType::login) {
             JaneZ::String<22> username(tmp.username);
             JaneZ::String<32> password(tmp.password);
-            user_system.login(username,password);
+            if(user_system.login(username,password)) {
+                std::cout << 0 << '\n';
+            }else {
+                std::cout << -1 << '\n';
+            }
         }else if(tmp.a == JaneZ::opType::logout) {
             JaneZ::String<22> username(tmp.username);
-            user_system.logout(username);
+            if(user_system.logout(username)) {
+                std::cout << 0 << '\n';
+            }else {
+                std::cout << -1 << '\n';
+            }
         }else if(tmp.a == JaneZ::opType::query_profile) {
             JaneZ::String<22> curUsername(tmp.cur_username);
             JaneZ::String<22> username(tmp.username);
-            user_system.query_profile(curUsername,username);
+            UB result = user_system.query_profile(curUsername,username);
+            if(result.canBeOperated == false) {
+                std::cout << -1 << '\n';
+            }else {
+                std::cout << result.Info.username << " "<< result.Info.name << " "<< result.Info.mailAddr << " " << result.Info.privilege<< '\n';
+            }
         }else if(tmp.a == JaneZ::opType::modify_profile) {
             JaneZ::String<22> curUsername(tmp.cur_username);
             JaneZ::String<22> username(tmp.username);
@@ -42,7 +59,12 @@ int main(){
             JaneZ::String<22> name(tmp.name);
             JaneZ::String<32> mail(tmp.mail);
             int privilege = tmp.privilege;
-            user_system.modify_profile(curUsername,username,password,name,mail,privilege);
+            UB result = user_system.modify_profile(curUsername,username,password,name,mail,privilege);
+            if(result.canBeOperated == false) {
+                std::cout << -1 << '\n';
+            }else {
+                std::cout << result.Info.username << " "<< result.Info.name << " "<< result.Info.mailAddr << " " << result.Info.privilege<< '\n';
+            }
         }else if(tmp.a == JaneZ::opType::add_train) {
             JaneZ::String<22> trainID(tmp.ID);
             int StationNum = tmp.StationNum;

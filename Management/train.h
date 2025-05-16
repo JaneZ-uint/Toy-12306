@@ -32,6 +32,8 @@ struct TrainInfo {
     char type;
     bool is_released = false;
 
+    TrainInfo():is_released(false){}
+
     TrainInfo(const TrainInfo &other) = default;
 
     bool operator==(const TrainInfo &other) const {

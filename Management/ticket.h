@@ -24,6 +24,9 @@ struct TicketInfo {
     bool waitList = false;
     int num = 0;
     int timeCost = 0;
+    int ticketPrice;
+
+    TicketInfo():num(0),timeCost(0){}
 
     TicketInfo(const TicketInfo &other) = default;
 

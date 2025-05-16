@@ -7,7 +7,7 @@
 
 #include <cstddef>
 #include <ostream>
-
+#include <cstring>
 namespace JaneZ {
 
     template<size_t string_length>
@@ -83,6 +83,14 @@ namespace JaneZ {
         friend std::ostream& operator <<(std::ostream& os,const String & str) {
             os << str.data;
             return os;
+        }
+
+        String& operator=(const String& other) {
+            if (this != &other) { // 防止自赋值
+                strncpy(data, other.data, string_length);
+                data[string_length] = '\0'; // 确保以 '\0' 结尾
+            }
+            return *this;
         }
     };
 }

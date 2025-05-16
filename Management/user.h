@@ -57,7 +57,7 @@ struct UB {
 class UserSystem {
 private:
     BPT<ull, UserInfo> UserBase;
-    sjtu::map<ull, int> LoginStack;
+    sjtu::map<ull, bool> LoginStack;
 
 public:
     UserSystem():UserBase("UserBaseIndex","UserBaseLeaf"){}

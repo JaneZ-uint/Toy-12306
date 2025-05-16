@@ -187,6 +187,7 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
         }
     }else if(operation == "modify_profile") {
         info.a = JaneZ::modify_profile;
+        info.privilege = -1;
         while(i != length) {
             std::string tmp;
             if(s[i + 2] == 'c') {
