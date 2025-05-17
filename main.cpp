@@ -90,13 +90,25 @@ int main(){
             JaneZ::Date saleBeginDate = tmp.saleBeginDate;
             JaneZ::Date saleEndDate = tmp.saleEndDate;
             char type = tmp.Type;
-            train_system.add_train(trainID,StationNum,SeatNum,Stations,prices,startTime,travelTimes,stopoverTimes,saleBeginDate,saleEndDate,type);
+            if(train_system.add_train(trainID,StationNum,SeatNum,Stations,prices,startTime,travelTimes,stopoverTimes,saleBeginDate,saleEndDate,type)) {
+                std::cout << 0 << '\n';
+            }else {
+                std::cout << -1 << '\n';
+            }
         }else if(tmp.a == JaneZ::opType::delete_train) {
             JaneZ::String<22> trainID(tmp.ID);
-            train_system.delete_train(trainID);
+            if(train_system.delete_train(trainID)) {
+                std::cout << 0 << '\n';
+            }else {
+                std::cout << -1 << '\n';
+            }
         }else if(tmp.a == JaneZ::opType::release_train) {
             JaneZ::String<22> trainID(tmp.ID);
-            train_system.release_train(trainID);
+            if(train_system.release_train(trainID)) {
+                std::cout << 0 << '\n';
+            }else {
+                std::cout << -1 << '\n';
+            }
         }else if(tmp.a == JaneZ::opType::query_train) {
             JaneZ::String<22> trainID(tmp.ID);
             JaneZ::Date startDate = tmp.BeginDate;

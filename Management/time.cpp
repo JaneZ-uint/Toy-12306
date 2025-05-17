@@ -144,13 +144,13 @@ JaneZ::Date &JaneZ::Date::operator++(){
 JaneZ::TrainTime::TrainTime(JaneZ::Date& d, JaneZ::Clock& c):date(d),clock(c){}
 
 JaneZ::TrainTime &JaneZ::TrainTime::operator+(int m){
-    int Time = clock.hour * 60 + clock.minute;
-    Time += m;
-    clock.hour = Time / 60;
-    clock.minute = Time % 60;
-    if(clock.hour >= 24) {
-        clock.hour -= 24;
-        ++ date;
+    clock.minute += m;
+    clock.hour += clock.minute / 60;
+    clock.minute %= 60;
+    int days = clock.hour / 24;
+    clock.hour %= 24;
+    for (int i = 0; i < days; ++i) {
+        ++date;
     }
     return *this;
 }

@@ -4,6 +4,7 @@
 
 #ifndef TIME_H
 #define TIME_H
+#include <iostream>
 
 namespace JaneZ {
     struct Clock {
@@ -27,6 +28,7 @@ namespace JaneZ {
         bool operator>(const Clock &other) const;
 
         bool operator>=(const Clock &other) const;
+
     };
 
     struct Date {
@@ -59,10 +61,27 @@ namespace JaneZ {
         Date date;
         Clock clock;
 
+        TrainTime() = default;
+
         TrainTime(Date &d,Clock &c);
 
         TrainTime &operator+(int m);
     };
+
+    inline std::ostream& operator<<(std::ostream& os, const Clock& clock) {
+        os << clock.hour << ":" << (clock.minute < 10 ? "0" : "") << clock.minute;
+        return os;
+    }
+
+    inline std::ostream& operator<<(std::ostream& os, const Date& date) {
+        os << date.month << "-" << (date.day < 10 ? "0" : "") << date.day;
+        return os;
+    }
+
+    inline std::ostream& operator<<(std::ostream& os, const TrainTime& trainTime) {
+        os << trainTime.date << " " << trainTime.clock;
+        return os;
+    }
 }
 
 #endif //TIME_H

@@ -64,9 +64,14 @@ private:
     int total = 0;
 
 public:
-    UserSystem():UserBase("UserBaseIndex","UserBaseLeaf"){}
+    UserSystem():UserBase("UserBaseIndex","UserBaseLeaf") {
+        UserFile.initialise("user_info.txt");
+        UserFile.get_info(total,1);
+    }
 
-    ~UserSystem();
+    ~UserSystem() {
+        UserFile.write_info(total,1);
+    }
 
     bool add_user(JaneZ::String<22> &currentUsername, JaneZ::String<22> &username, JaneZ::String<32> &password,
                   JaneZ::String<22> &name, JaneZ::String<32> &mailAddr, int privilege);
