@@ -8,6 +8,7 @@
 #include "../Data Structure/BPT.h"
 #include "../Data Structure/map.h"
 #include "../Tool/HashFunction.h"
+#include "../Tool/MemoryRiver.h"
 
 using ull = unsigned long long int;
 
@@ -54,10 +55,13 @@ struct UB {
     bool canBeOperated;
 };
 
+
 class UserSystem {
 private:
-    BPT<ull, UserInfo> UserBase;
+    BPT<ull, int> UserBase;
+    MemoryRiver<UserInfo,1> UserFile;
     sjtu::map<ull, bool> LoginStack;
+    int total = 0;
 
 public:
     UserSystem():UserBase("UserBaseIndex","UserBaseLeaf"){}

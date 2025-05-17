@@ -14,19 +14,23 @@ bool UserSystem::add_user(JaneZ::String<22> &currentUsername, JaneZ::String<22> 
         firstUser.name = name;
         firstUser.mailAddr = mailAddr;
         firstUser.privilege = 10;
-        UserBase.insert(HashUsername,firstUser);
+        UserBase.insert(HashUsername,total);
+        UserFile.write(firstUser,total);
+        ++ total;
         return true;
     }else {
         ull HashCur = JaneZ::Hash<22>::HashFunction(currentUsername);
         if(LoginStack.find(HashCur) == LoginStack.end()) {
             return false;
         }
-        sjtu::vector<UserInfo> result = UserBase.find(HashCur);
-        if(result[0].privilege <= privilege) {
+        sjtu::vector<int> result = UserBase.find(HashCur);
+        UserInfo current;
+        UserFile.read(current,result[0]);
+        if(current.privilege <= privilege) {
             return false;
         }
         ull HashNow = JaneZ::Hash<22>::HashFunction(username);
-        sjtu::vector<UserInfo> tmp = UserBase.find(HashNow);
+        sjtu::vector<int> tmp = UserBase.find(HashNow);
         if(!tmp.empty()) {
             return false;
         }
@@ -36,7 +40,9 @@ bool UserSystem::add_user(JaneZ::String<22> &currentUsername, JaneZ::String<22> 
         info.name = name;
         info.mailAddr = mailAddr;
         info.privilege = privilege;
-        UserBase.insert(HashNow,info);
+        UserBase.insert(HashNow,total);
+        UserFile.write(info,total);
+        ++ total;
         return true;
     }
 }
@@ -44,11 +50,13 @@ bool UserSystem::add_user(JaneZ::String<22> &currentUsername, JaneZ::String<22> 
 bool UserSystem::login(JaneZ::String<22> &username, JaneZ::String<32> &password) {
     ull HashNow = JaneZ::Hash<22>::HashFunction(username);
     if(LoginStack.find(HashNow) == LoginStack.end()) {
-        sjtu::vector<UserInfo> result = UserBase.find(HashNow);
+        sjtu::vector<int> result = UserBase.find(HashNow);
         if(result.empty()) {
             return false;
         }
-        if(result[0].password == password) {
+        UserInfo current;
+        UserFile.read(current,result[0]);
+        if(current.password == password) {
             LoginStack.insert({HashNow,true});
             return true;
         }else {
@@ -61,13 +69,13 @@ bool UserSystem::login(JaneZ::String<22> &username, JaneZ::String<32> &password)
 
 bool UserSystem::logout(JaneZ::String<22> &username) {
     ull HashNow = JaneZ::Hash<22>::HashFunction(username);
-    if(LoginStack.find(HashNow) == LoginStack.end() || LoginStack.find(HashNow)->second == false) {
+    if(LoginStack.find(HashNow) == LoginStack.end() ) {
         return false;
     }
-    sjtu::vector<UserInfo> result = UserBase.find(HashNow);
+    /*sjtu::vector<int> result = UserBase.find(HashNow);
     if(result.empty()) {
         return false;
-    }
+    }*/
     LoginStack.erase(LoginStack.find(HashNow));
     return true;
 }
@@ -79,22 +87,26 @@ UB UserSystem::query_profile(JaneZ::String<22> &currentUsername, JaneZ::String<2
         Query.canBeOperated = false;
         return Query;
     }
-    sjtu::vector<UserInfo> resultCur = UserBase.find(HashCur);
+    sjtu::vector<int> resultCur = UserBase.find(HashCur);
     ull HashNow = JaneZ::Hash<22>::HashFunction(username);
-    sjtu::vector<UserInfo> result = UserBase.find(HashNow);
+    sjtu::vector<int> result = UserBase.find(HashNow);
     if(result.empty()) {
         Query.canBeOperated = false;
         return Query;
     }
-    if(resultCur[0].privilege < result[0].privilege) {
+    UserInfo curInfo;
+    UserFile.read(curInfo,resultCur[0]);
+    UserInfo info;
+    UserFile.read(info,result[0]);
+    if(curInfo.privilege < info.privilege) {
         Query.canBeOperated = false;
         return Query;
     }
     Query.Info.username = username;
-    Query.Info.password = result[0].password;
-    Query.Info.name = result[0].name;
-    Query.Info.mailAddr = result[0].mailAddr;
-    Query.Info.privilege = result[0].privilege;
+    Query.Info.password = info.password;
+    Query.Info.name = info.name;
+    Query.Info.mailAddr = info.mailAddr;
+    Query.Info.privilege = info.privilege;
     Query.canBeOperated = true;
     return Query;
 }
@@ -106,40 +118,49 @@ UB UserSystem::modify_profile(JaneZ::String<22> &currentUsername, JaneZ::String<
         Query.canBeOperated = false;
         return Query;
     }
-    sjtu::vector<UserInfo> resultCur = UserBase.find(HashCur);
+    sjtu::vector<int> resultCur = UserBase.find(HashCur);
     ull HashNow = JaneZ::Hash<22>::HashFunction(username);
-    sjtu::vector<UserInfo> result = UserBase.find(HashNow);
+    sjtu::vector<int> result = UserBase.find(HashNow);
     if(result.empty()) {
         Query.canBeOperated = false;
         return Query;
     }
-    if(resultCur[0].privilege < result[0].privilege) {
+    UserInfo curInfo;
+    UserFile.read(curInfo,resultCur[0]);
+    UserInfo info;
+    UserFile.read(info,result[0]);
+    if(curInfo.privilege < info.privilege) {
         Query.canBeOperated = false;
         return Query;
     }
     Query.Info.username = username;
     if(password != "\0") {
         Query.Info.password = password;
+        info.password = password;
     }else {
-        Query.Info.password = result[0].password;
+        Query.Info.password = info.password;
     }
     if(name != "\0") {
         Query.Info.name = name;
+        info.name = name;
     }else {
-        Query.Info.name = result[0].name;
+        Query.Info.name = info.name;
     }
     if(mailAddr != "\0") {
         Query.Info.mailAddr = mailAddr;
+        info.mailAddr = mailAddr;
     }else {
-        Query.Info.mailAddr = result[0].mailAddr;
+        Query.Info.mailAddr = info.mailAddr;
     }
     if(privilege != -1) {
         Query.Info.privilege = privilege;
+        info.privilege = privilege;
     }else {
-        Query.Info.privilege = result[0].privilege;
+        Query.Info.privilege = info.privilege;
     }
     Query.canBeOperated = true;
-    UserBase.erase(HashNow,result[0]);
-    UserBase.insert(HashNow,Query.Info);
+    /*UserBase.erase(HashNow,result[0]);
+    UserBase.insert(HashNow,Query.Info);*/
+    UserFile.write(info,result[0]);//写回原文件中
     return Query;
 }
