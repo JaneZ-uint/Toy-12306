@@ -50,7 +50,7 @@ struct Seats {
      * freeSeatNum[2] = seatNum - 200 （再打个比方
      * 所以求某个区间[a,b]上的余票数等价于求min(freeSeatNum[a+1],...,freeSeatNum[b])
      */
-    int freeSeatNum[102] = {};
+    int DeltaSeatNum[102] = {};
 };
 
 struct TrainInfo {
@@ -89,17 +89,45 @@ struct TrainInfo {
     }
 };
 
+/* 维护每个车次经过的站信息
+ * 用在对已发布列车的车票查询中
+ * 需要将站名作为KEY；将这一信息作为Other
+ */
+struct StationValue {
+    JaneZ::String<42> stationName;
+    JaneZ::String<22> trainID;
+    int fileIndex;//源信息在TrainFile中的位置
+    int nStation;//第几站
+
+    bool operator<(const StationValue &other) const{
+        return fileIndex < other.fileIndex;
+    }
+
+    bool operator>(const StationValue &other) const{
+        return fileIndex > other.fileIndex;
+    }
+
+    bool operator==(const StationValue &other) const {
+        return fileIndex == other.fileIndex;
+    }
+};
+
 
 class TrainSystem {
 private:
     BPT<ull, int> TrainBase;//存储所有火车在TrainFile中的位置，无论发布与否
     MemoryRiver<TrainInfo,1> TrainFile;//存储所有火车信息，无论发布与否
-    BPT<ull, int> ReleasedTrainBase;
+    BPT<ull, StationValue> ReleasedTrainBase;//这个地方Key存什么似乎需要做一些变化
+    //ull是对被released的车的每一站做哈希
     int total = 0;
+    MemoryRiver<Seats,1> SeatFile;//存储卖出去的座位信息，以每日的一班车为单位（不可大于最大座位数）
+    //rmk: 这里尝试维护一个变化信息：卖出去- 有人下车+
+    const int MaxDays = 95;
 
 public:
     TrainSystem():TrainBase("TrainBaseIndex","TrainBaseLeaf"),ReleasedTrainBase("ReleasedTrainBaseIndex","ReleasedTrainBaseLeaf") {
         TrainFile.initialise("train.txt");
+        SeatFile.initialise("seat.txt");
         TrainFile.get_info(total,1);
     }
 

@@ -55,6 +55,8 @@ namespace JaneZ {
         bool operator>=(const Date &other) const;
 
         Date &operator++();
+
+        int operator-(const Date &other) const;
     };
 
     struct TrainTime {

@@ -140,7 +140,20 @@ JaneZ::Date &JaneZ::Date::operator++(){
     return *this;
 }
 
-;
+int JaneZ::Date::operator-(const Date &other) const {
+    if (*this == other) {
+        return 0;
+    }
+    const Date &later = (*this > other) ? *this : other;
+    const Date &earlier = (*this > other) ? other : *this;
+    int days = 0;
+    for (int m = earlier.month; m < later.month; ++m) {
+        days += months[m];
+    }
+    days += later.day - earlier.day;
+    return days;
+}
+
 JaneZ::TrainTime::TrainTime(JaneZ::Date& d, JaneZ::Clock& c):date(d),clock(c){}
 
 JaneZ::TrainTime &JaneZ::TrainTime::operator+(int m){

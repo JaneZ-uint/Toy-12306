@@ -112,7 +112,9 @@ int main(){
         }else if(tmp.a == JaneZ::opType::query_train) {
             JaneZ::String<22> trainID(tmp.ID);
             JaneZ::Date startDate = tmp.BeginDate;
-            train_system.query_train(trainID,startDate);
+            if(!train_system.query_train(trainID,startDate)) {
+                std::cout << -1 << '\n';
+            }
         }else if(tmp.a == JaneZ::opType::query_ticket) {
             JaneZ::String<42> startPlace(tmp.fromStation);
             JaneZ::String<42> endPlace(tmp.toStation);

@@ -73,7 +73,16 @@ bool TrainSystem::release_train(JaneZ::String<22> &trainID) {
     }
     current.is_released = true;
     TrainFile.write(current,posTmp[0]);
-    ReleasedTrainBase.insert(HashID,posTmp[0]);
+    for(int i = 0;i < current.stationNum;i ++) {
+        ull HashName = JaneZ::Hash<42>::HashFunction(current.stations[i].stationName);
+        StationValue now;
+        now.stationName = current.stations[i].stationName;
+        now.trainID = trainID;
+        now.fileIndex = posTmp[0];
+        now.nStation = i;
+        //TODO 根据需要可能还要增加一些信息
+        ReleasedTrainBase.insert(HashName,now);
+    }
     return true;
 }
 
@@ -89,6 +98,14 @@ bool TrainSystem::query_train(JaneZ::String<22> &trainID, JaneZ::Date &date) {
     JaneZ::TrainTime BeginTIme;
     BeginTIme.date = date;
     BeginTIme.clock = current.startTime;
+    if(date > current.saleEndDate) {
+        return false;
+    }
+    int nDay = date - current.saleStartDate;//0 base
+    Seats currentSeat;
+    SeatFile.read(currentSeat,MaxDays * posTmp[0] + nDay);
+    std::cout << current.trainID << " " << current.type << '\n';
+    int MaxSeatNum = current.seatNum;
     for(int i = 0;i < current.stationNum;i ++) {
         std::cout << current.stations[i].stationName << " ";
         if(i == 0) {
@@ -106,6 +123,50 @@ bool TrainSystem::query_train(JaneZ::String<22> &trainID, JaneZ::Date &date) {
             JaneZ::TrainTime leavingTime = currentTime + current.stations[i].stopoverTime;
             std::cout << leavingTime << " ";
         }
-        //TODO Wait to deal with the seats.
+        std::cout << current.stations[i].price << " ";
+        if(current.is_released) {
+            if(i != current.stationNum - 1) {
+                MaxSeatNum += currentSeat.DeltaSeatNum[i];
+                std::cout << MaxSeatNum;
+            }else {
+                std::cout << "x";
+            }
+        }else {
+            if(i != current.stationNum - 1) {
+                std::cout << current.seatNum;
+            }else {
+                std::cout << "x";
+            }
+        }
+        std::cout << '\n';
+    }
+    return true;
+}
+
+void TrainSystem::query_ticket(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ::Date &d, JaneZ::SortType SortWay) {
+    ull HashStartStation = JaneZ::Hash<42>::HashFunction(s);
+    ull HashToStation = JaneZ::Hash<42>::HashFunction(t);
+    sjtu::vector<StationValue> Start = ReleasedTrainBase.find(HashStartStation);
+    sjtu::vector<StationValue> To = ReleasedTrainBase.find(HashToStation);
+    size_t startTotalNum = Start.size();
+    size_t toTotalNum = To.size();
+    size_t st = 0;
+    size_t to = 0;
+    //TODO
+    while(st < startTotalNum && to < toTotalNum) {
+        if(Start[st] < To[st]) {
+            st ++;
+            continue;
+        }
+        if(Start[st] > To[st]) {
+            to ++;
+            continue;
+        }
+        if(Start[st].nStation >= To[st].nStation) {
+            st ++;
+            to ++;
+            continue;
+        }
+        //TODO
     }
 }
