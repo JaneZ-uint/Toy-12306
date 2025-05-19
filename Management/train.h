@@ -98,6 +98,13 @@ struct StationValue {
     JaneZ::String<22> trainID;
     int fileIndex;//源信息在TrainFile中的位置
     int nStation;//第几站
+    int arrivingTimeCost;
+    int leavingTimeCost;
+    int price;
+    int MaxSeatsNum;
+    JaneZ::Date saleBeginDate;
+    JaneZ::Date saleEndDate;
+    JaneZ::Clock StartClock;
 
     bool operator<(const StationValue &other) const{
         return fileIndex < other.fileIndex;
@@ -112,6 +119,35 @@ struct StationValue {
     }
 };
 
+struct StationValuePair {
+    StationValue st;
+    StationValue to;
+};
+
+struct TimeCostInfo {
+    int totalTime;
+    int totalCost;
+    JaneZ::String<22> trainID;
+    int index;//数组下标
+};
+
+struct CompTime {
+    bool operator()(const TimeCostInfo& a, const TimeCostInfo& b) const {
+        if (a.totalTime != b.totalTime) {
+            return a.totalTime < b.totalTime;
+        }
+        return a.trainID < b.trainID;
+    }
+};
+
+struct CompCost {
+    bool operator()(const TimeCostInfo& a, const TimeCostInfo& b) const {
+        if (a.totalCost != b.totalCost) {
+            return a.totalCost < b.totalCost;
+        }
+        return a.trainID < b.trainID;
+    }
+};
 
 class TrainSystem {
 private:
@@ -150,6 +186,8 @@ public:
     bool release_train(JaneZ::String<22> &trainID);
 
     bool query_train(JaneZ::String<22> &trainID, JaneZ::Date &date);
+
+    int getSeats(Seats seat,int stIndex,int toIndex,int maxSeatsNUm);
 
     void query_ticket(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ::Date &d, JaneZ::SortType SortWay);
 

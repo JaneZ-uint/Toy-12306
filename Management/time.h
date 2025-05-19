@@ -29,6 +29,9 @@ namespace JaneZ {
 
         bool operator>=(const Clock &other) const;
 
+        Clock operator+(int m) const;
+
+        int toMinutes() const;
     };
 
     struct Date {
@@ -56,7 +59,13 @@ namespace JaneZ {
 
         Date &operator++();
 
+        Date& operator--();
+
         int operator-(const Date &other) const;
+
+        Date operator+(int days) const;
+
+        static Date addMinutesToDateTime(const Date& date, const Clock& clock, int minutes);
     };
 
     struct TrainTime {

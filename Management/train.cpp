@@ -4,6 +4,8 @@
 
 #include <iostream>
 #include "train.h"
+
+#include "../Data Structure/priority_queue.h"
 #include "../Tool/HashFunction.h"
 using ull = unsigned long long int;
 
@@ -80,7 +82,13 @@ bool TrainSystem::release_train(JaneZ::String<22> &trainID) {
         now.trainID = trainID;
         now.fileIndex = posTmp[0];
         now.nStation = i;
-        //TODO 根据需要可能还要增加一些信息
+        now.arrivingTimeCost = current.stations[i].travelTime;
+        now.leavingTimeCost = current.stations[i].stopoverTime + now.arrivingTimeCost;
+        now.price = current.stations[i].price;
+        now.saleBeginDate = current.saleStartDate;
+        now.saleEndDate = current.saleEndDate;
+        now.StartClock = current.startTime;
+        now.MaxSeatsNum = current.seatNum;
         ReleasedTrainBase.insert(HashName,now);
     }
     return true;
@@ -143,6 +151,22 @@ bool TrainSystem::query_train(JaneZ::String<22> &trainID, JaneZ::Date &date) {
     return true;
 }
 
+int TrainSystem::getSeats(Seats seat, int stIndex, int toIndex, int maxSeatsNUm) {
+    int delta = 0;
+    int min = 100005;
+    for(int i = stIndex + 1;i <= toIndex;i ++) {
+        delta += seat.DeltaSeatNum[i];
+        if(delta < min) {
+            min = delta;
+        }
+    }
+    int stSeat = maxSeatsNUm;
+    for(int i = 0;i <= stIndex;i ++) {
+        stSeat += seat.DeltaSeatNum[i];
+    }
+    return stSeat + min;
+}
+
 void TrainSystem::query_ticket(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ::Date &d, JaneZ::SortType SortWay) {
     ull HashStartStation = JaneZ::Hash<42>::HashFunction(s);
     ull HashToStation = JaneZ::Hash<42>::HashFunction(t);
@@ -152,21 +176,99 @@ void TrainSystem::query_ticket(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ
     size_t toTotalNum = To.size();
     size_t st = 0;
     size_t to = 0;
-    //TODO
+    sjtu::vector<StationValuePair> possibleSolution;
     while(st < startTotalNum && to < toTotalNum) {
-        if(Start[st] < To[st]) {
+        if(Start[st] < To[to]) {
             st ++;
             continue;
         }
-        if(Start[st] > To[st]) {
+        if(Start[st] > To[to]) {
             to ++;
             continue;
         }
-        if(Start[st].nStation >= To[st].nStation) {
+        if(Start[st].nStation >= To[to].nStation) {
             st ++;
             to ++;
             continue;
         }
-        //TODO
+        StationValuePair now;
+        now.st = Start[st];
+        now.to = To[to];
+        possibleSolution.push_back(now);
+    }
+    sjtu::priority_queue<TimeCostInfo,CompTime> timePQ;
+    sjtu::priority_queue<TimeCostInfo,CompCost> costPQ;
+    for(int i = 0;i < possibleSolution.size();i ++) {
+        JaneZ::Date earliestDate = JaneZ::Date::addMinutesToDateTime(possibleSolution[i].st.saleBeginDate,possibleSolution[i].st.StartClock,possibleSolution[i].st.arrivingTimeCost);
+        JaneZ::Date latestDate = JaneZ::Date::addMinutesToDateTime(possibleSolution[i].st.saleEndDate,possibleSolution[i].st.StartClock,possibleSolution[i].st.arrivingTimeCost);
+        if(d < earliestDate && d > latestDate) {
+            continue;
+        }
+        if(SortWay == JaneZ::SortType::time) {
+            TimeCostInfo current;
+            current.index = i;
+            current.totalTime = possibleSolution[i].to.arrivingTimeCost - possibleSolution[i].st.leavingTimeCost;
+            current.totalCost = possibleSolution[i].to.price - possibleSolution[i].st.price;
+            current.trainID = possibleSolution[i].st.trainID;
+            timePQ.push(current);
+        }else {
+            TimeCostInfo current;
+            current.index = i;
+            current.totalTime = possibleSolution[i].to.arrivingTimeCost - possibleSolution[i].st.leavingTimeCost;
+            current.totalCost = possibleSolution[i].to.price - possibleSolution[i].st.price;
+            current.trainID = possibleSolution[i].st.trainID;
+            costPQ.push(current);
+        }
+    }
+    if(SortWay == JaneZ::SortType::time) {
+        std::cout << timePQ.size() << '\n';
+        while(!timePQ.empty()) {
+            TimeCostInfo top = timePQ.top();
+            timePQ.pop();
+            std::cout << top.trainID << " ";
+            StationValue topValue1 = possibleSolution[top.index].st;
+            StationValue topValue2 = possibleSolution[top.index].to;
+            std::cout << topValue1.stationName << " ";
+            std::cout << d << " ";
+            JaneZ::Clock startTime = topValue1.StartClock;
+            JaneZ::Clock leavingClock = startTime + topValue1.leavingTimeCost;
+            std::cout << leavingClock << " ";
+            std::cout << "-> ";
+            std::cout << topValue2.stationName << " ";
+            JaneZ::Date arrivingDate = JaneZ::Date::addMinutesToDateTime(d,leavingClock,top.totalTime);
+            std::cout << arrivingDate << " ";
+            JaneZ::Clock arrivingClock = startTime + topValue2.arrivingTimeCost;
+            std::cout << arrivingClock << " ";
+            std::cout << top.totalCost << " ";
+            Seats seat;
+            int nDay = d - possibleSolution[top.index].st.saleBeginDate;
+            SeatFile.read(seat,MaxDays * topValue1.fileIndex + nDay);
+            std::cout << getSeats(seat,topValue1.nStation,topValue2.nStation,topValue1.MaxSeatsNum) << '\n';
+        }
+    }else if(SortWay == JaneZ::SortType::cost) {
+        std::cout << timePQ.size() << '\n';
+        while(!costPQ.empty()) {
+            TimeCostInfo top = costPQ.top();
+            costPQ.pop();
+            std::cout << top.trainID << " ";
+            StationValue topValue1 = possibleSolution[top.index].st;
+            StationValue topValue2 = possibleSolution[top.index].to;
+            std::cout << topValue1.stationName << " ";
+            std::cout << d << " ";
+            JaneZ::Clock startTime = topValue1.StartClock;
+            JaneZ::Clock leavingClock = startTime + topValue1.leavingTimeCost;
+            std::cout << leavingClock << " ";
+            std::cout << "-> ";
+            std::cout << topValue2.stationName << " ";
+            JaneZ::Date arrivingDate = JaneZ::Date::addMinutesToDateTime(d,leavingClock,top.totalTime);
+            std::cout << arrivingDate << " ";
+            JaneZ::Clock arrivingClock = startTime + topValue2.arrivingTimeCost;
+            std::cout << arrivingClock << " ";
+            std::cout << top.totalCost << " ";
+            Seats seat;
+            int nDay = d - possibleSolution[top.index].st.saleBeginDate;
+            SeatFile.read(seat,MaxDays * topValue1.fileIndex + nDay);
+            std::cout << getSeats(seat,topValue1.nStation,topValue2.nStation,topValue1.MaxSeatsNum) << '\n';
+        }
     }
 }
