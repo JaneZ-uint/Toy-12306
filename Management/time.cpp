@@ -79,6 +79,10 @@ int JaneZ::Clock::toMinutes() const {
     return hour * 60 + minute;
 }
 
+int JaneZ::Clock::operator-(const Clock &other) const {
+    return this->toMinutes() - other.toMinutes();
+}
+
 JaneZ::Date::Date() {
     month = 6;
     day = 1;
@@ -196,6 +200,36 @@ JaneZ::Date JaneZ::Date::addMinutesToDateTime(const Date &date, const Clock &clo
 
 JaneZ::TrainTime::TrainTime(JaneZ::Date& d, JaneZ::Clock& c):date(d),clock(c){}
 
+JaneZ::TrainTime &JaneZ::TrainTime::operator=(const TrainTime &other) {
+    if (this != &other) {
+        date = other.date;
+        clock = other.clock;
+    }
+    return *this;
+}
+
+bool JaneZ::TrainTime::operator==(const TrainTime &other) const {
+    return (date == other.date) && (clock == other.clock);
+}
+
+bool JaneZ::TrainTime::operator<(const TrainTime &other) const {
+    if (date < other.date) return true;
+    if (date == other.date) return clock < other.clock;
+    return false;
+}
+
+bool JaneZ::TrainTime::operator<=(const TrainTime &other) const {
+    return (*this < other) || (*this == other);
+}
+
+bool JaneZ::TrainTime::operator>(const TrainTime &other) const {
+    return !(*this <= other);
+}
+
+bool JaneZ::TrainTime::operator>=(const TrainTime &other) const {
+    return !(*this < other);
+}
+
 JaneZ::TrainTime &JaneZ::TrainTime::operator+(int m){
     clock.minute += m;
     clock.hour += clock.minute / 60;
@@ -206,4 +240,10 @@ JaneZ::TrainTime &JaneZ::TrainTime::operator+(int m){
         ++date;
     }
     return *this;
+}
+
+int JaneZ::TrainTime::operator-(const TrainTime &other) const {
+    int daysDiff = date - other.date;
+    int minutesDiff = clock - other.clock;
+    return daysDiff * 24 * 60 + minutesDiff;
 }

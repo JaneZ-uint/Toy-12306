@@ -199,9 +199,9 @@ void TrainSystem::query_ticket(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ
     sjtu::priority_queue<TimeCostInfo,CompTime> timePQ;
     sjtu::priority_queue<TimeCostInfo,CompCost> costPQ;
     for(int i = 0;i < possibleSolution.size();i ++) {
-        JaneZ::Date earliestDate = JaneZ::Date::addMinutesToDateTime(possibleSolution[i].st.saleBeginDate,possibleSolution[i].st.StartClock,possibleSolution[i].st.arrivingTimeCost);
-        JaneZ::Date latestDate = JaneZ::Date::addMinutesToDateTime(possibleSolution[i].st.saleEndDate,possibleSolution[i].st.StartClock,possibleSolution[i].st.arrivingTimeCost);
-        if(d < earliestDate && d > latestDate) {
+        JaneZ::Date earliestDate = JaneZ::Date::addMinutesToDateTime(possibleSolution[i].st.saleBeginDate,possibleSolution[i].st.StartClock,possibleSolution[i].st.leavingTimeCost);
+        JaneZ::Date latestDate = JaneZ::Date::addMinutesToDateTime(possibleSolution[i].st.saleEndDate,possibleSolution[i].st.StartClock,possibleSolution[i].st.leavingTimeCost);
+        if(d < earliestDate || d > latestDate) {
             continue;
         }
         if(SortWay == JaneZ::SortType::time) {
@@ -227,6 +227,7 @@ void TrainSystem::query_ticket(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ
             timePQ.pop();
             std::cout << top.trainID << " ";
             StationValue topValue1 = possibleSolution[top.index].st;
+            JaneZ::Date earliestDate = JaneZ::Date::addMinutesToDateTime(topValue1.saleBeginDate,topValue1.StartClock,topValue1.leavingTimeCost);
             StationValue topValue2 = possibleSolution[top.index].to;
             std::cout << topValue1.stationName << " ";
             std::cout << d << " ";
@@ -241,7 +242,7 @@ void TrainSystem::query_ticket(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ
             std::cout << arrivingClock << " ";
             std::cout << top.totalCost << " ";
             Seats seat;
-            int nDay = d - possibleSolution[top.index].st.saleBeginDate;
+            int nDay = d - earliestDate;
             SeatFile.read(seat,MaxDays * topValue1.fileIndex + nDay);
             std::cout << getSeats(seat,topValue1.nStation,topValue2.nStation,topValue1.MaxSeatsNum) << '\n';
         }
@@ -252,6 +253,7 @@ void TrainSystem::query_ticket(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ
             costPQ.pop();
             std::cout << top.trainID << " ";
             StationValue topValue1 = possibleSolution[top.index].st;
+            JaneZ::Date earliestDate = JaneZ::Date::addMinutesToDateTime(topValue1.saleBeginDate,topValue1.StartClock,topValue1.leavingTimeCost);
             StationValue topValue2 = possibleSolution[top.index].to;
             std::cout << topValue1.stationName << " ";
             std::cout << d << " ";
@@ -266,9 +268,219 @@ void TrainSystem::query_ticket(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ
             std::cout << arrivingClock << " ";
             std::cout << top.totalCost << " ";
             Seats seat;
-            int nDay = d - possibleSolution[top.index].st.saleBeginDate;
+            int nDay = d - earliestDate;
             SeatFile.read(seat,MaxDays * topValue1.fileIndex + nDay);
             std::cout << getSeats(seat,topValue1.nStation,topValue2.nStation,topValue1.MaxSeatsNum) << '\n';
+        }
+    }
+}
+
+void TrainSystem::printTransfer(JaneZ::String<42> &s, JaneZ::String<42> &t,TransferInfo &current) {
+    std::cout << current.firstTrain << " ";
+    std::cout << s << " ";
+    std::cout << current.initialTime << " ";
+    std::cout << "-> ";
+    std::cout << current.midStationName << " ";
+    std::cout << current.midArriveTime << " ";
+    std::cout << current.firstCost << " ";
+    std::cout << current.firstEmptySeat << '\n';
+    std::cout << current.secondTrain << " ";
+    std::cout << current.midStationName << " ";
+    std::cout << current.midLeaveTime << " ";
+    std::cout << "-> ";
+    std::cout << current.finalTime << " ";
+    std::cout << current.secondCost << " ";
+    std::cout << current.secondEmptySeat << '\n';
+}
+
+void TrainSystem::query_transfer(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ::Date &d, JaneZ::SortType SortWay) {
+    ull HashStartStation = JaneZ::Hash<42>::HashFunction(s);
+    ull HashToStation = JaneZ::Hash<42>::HashFunction(t);
+    sjtu::vector<StationValue> Start = ReleasedTrainBase.find(HashStartStation);
+    sjtu::vector<StationValue> To = ReleasedTrainBase.find(HashToStation);
+
+    TransferInfo minTime;
+    TransferInfo minCost;
+
+    bool TimeFlag = false;
+    bool CostFlag = false;
+
+    for(int i = 0;i < Start.size();i ++) {
+        int departNum = Start[i].nStation;
+        TrainInfo firstTrain;
+        TrainFile.read(firstTrain,Start[i].fileIndex);
+        StationInfo Departure = firstTrain.stations[departNum];
+        JaneZ::Date earliestDate = JaneZ::Date::addMinutesToDateTime(firstTrain.saleStartDate,firstTrain.startTime,Departure.travelTime + Departure.stopoverTime);
+        JaneZ::Date latestDate = JaneZ::Date::addMinutesToDateTime(firstTrain.saleEndDate,firstTrain.startTime,Departure.travelTime + Departure.stopoverTime);
+        if(d < earliestDate || d > latestDate) {
+            continue;
+        }
+        JaneZ::Date day = firstTrain.saleStartDate + (d - earliestDate);
+
+        JaneZ::TrainTime firstTrainStart(day,firstTrain.startTime);//具体哪一天发车
+        for(int j = 0;j < To.size();j ++) {
+            if(Start[i].fileIndex == To[j].fileIndex) {
+                continue;
+            }
+            TrainInfo secondTrain;
+            TrainFile.read(secondTrain,To[i].fileIndex);
+            //检查secondTrain是否在可行时间范围内
+
+            int terminalNum = To[j].nStation;
+            StationInfo Terminal = secondTrain.stations[terminalNum];
+            for(int k = 0;k < terminalNum;k ++) { //遍历第二辆车第0站到终点站前一站
+                for(int l = departNum + 1;l < firstTrain.stationNum;l ++) {  //遍历第一辆车从起点站到最后一战
+                    if(firstTrain.stations[l].stationName != secondTrain.stations[k].stationName) {
+                        continue;
+                    }
+                    StationInfo midStation1 = firstTrain.stations[l];
+                    JaneZ::TrainTime midArrive = firstTrainStart + midStation1.travelTime;//到中转站时间
+
+                    StationInfo midStation2 = secondTrain.stations[k];
+                    JaneZ::TrainTime secondStart(secondTrain.saleStartDate,secondTrain.startTime);
+                    //第二辆车最早离开中转站时刻
+                    JaneZ::TrainTime secondEarliest = secondStart + midStation2.travelTime + midStation2.stopoverTime;
+                    JaneZ::TrainTime secondEnd(secondTrain.saleEndDate,secondTrain.startTime);
+                    //第二辆车最晚离开中转站时刻
+                    JaneZ::TrainTime secondLatest = secondEnd + midStation2.travelTime + midStation2.stopoverTime;
+
+                    if(midArrive > secondLatest) {
+                        continue; //绝对没有可能
+                    }else if(midArrive < secondEarliest) {
+                        //有可能，等最早的第二班车到
+                        int waitTime = secondEarliest - midArrive;
+                        int firstRunningTime = midStation1.travelTime - Departure.travelTime - Departure.stopoverTime;
+                        int secondRunningTime = Terminal.travelTime - midStation2.travelTime - midStation2.stopoverTime;
+                        int totalTime = firstRunningTime + secondRunningTime + waitTime;
+                        int firstCost = midStation1.price - Departure.price;
+                        int secondCost = Terminal.price - midStation2.price;
+                        int totalCost = firstCost + secondCost;
+
+                        TransferInfo current;
+                        current.totalTime = totalTime;
+                        current.totalCost = totalCost;
+                        current.firstTrain = firstTrain.trainID;
+                        current.secondTrain = secondTrain.trainID;
+
+                        current.initialTime = firstTrainStart;
+                        current.midArriveTime = midArrive;
+                        current.midLeaveTime = secondEarliest;
+                        current.finalTime = secondEarliest + secondRunningTime;
+
+                        current.midStationName = midStation1.stationName;
+
+                        current.firstCost = firstCost;
+                        current.secondCost = secondCost;
+
+                        Seats seat1;
+                        int nDay1 = firstTrainStart.date - firstTrain.saleStartDate;
+                        SeatFile.read(seat1,Start[i].fileIndex * MaxDays + nDay1);
+                        int emptySeat1 = getSeats(seat1,departNum,l,firstTrain.seatNum);
+                        current.firstEmptySeat = emptySeat1;
+
+                        Seats seat2;
+                        int nDay2 = 0;
+                        SeatFile.read(seat2,To[j].fileIndex * MaxDays + nDay2);
+                        int emptySeat2 = getSeats(seat2,k,terminalNum,secondTrain.seatNum);
+                        current.secondEmptySeat = emptySeat2;
+
+                        if(SortWay == JaneZ::SortType::time) {
+                            if(TransferInfo::timeCmp(current,minTime)) {
+                                minTime = current;
+                                TimeFlag = true;
+                            }
+                        }else if(SortWay == JaneZ::SortType::cost) {
+                            if(TransferInfo::costCmp(current,minCost)) {
+                                minCost = current;
+                                CostFlag = true;
+                            }
+                        }
+                    }else {
+                        JaneZ::Clock firstClock = midArrive.clock;
+                        JaneZ::Clock secondClock = secondEarliest.clock;
+                        TransferInfo current;
+                        int firstRunningTime = midStation1.travelTime - Departure.travelTime - Departure.stopoverTime;
+                        int secondRunningTime = Terminal.travelTime - midStation2.travelTime - midStation2.stopoverTime;
+                        int firstCost = midStation1.price - Departure.price;
+                        int secondCost = Terminal.price - midStation2.price;
+                        int totalCost = firstCost + secondCost;
+
+                        current.firstTrain = firstTrain.trainID;
+                        current.secondTrain = secondTrain.trainID;
+
+                        current.initialTime = firstTrainStart;
+                        current.midArriveTime = midArrive;
+
+                        current.midStationName = midStation1.stationName;
+
+                        current.firstCost = firstCost;
+                        current.secondCost = secondCost;
+                        current.totalCost = totalCost;
+
+                        Seats seat1;
+                        int nDay1 = firstTrainStart.date - firstTrain.saleStartDate;
+                        SeatFile.read(seat1,Start[i].fileIndex * MaxDays + nDay1);
+                        int emptySeat1 = getSeats(seat1,departNum,l,firstTrain.seatNum);
+                        current.firstEmptySeat = emptySeat1;
+
+                        if(firstClock <= secondClock) {
+                            //当天即可完成换乘
+                            int waitTime = secondClock - firstClock;
+                            int totalTime = firstRunningTime + secondRunningTime + waitTime;
+                            current.totalTime = totalTime;
+
+                            current.midLeaveTime.date = midArrive.date;
+                            current.midLeaveTime.clock = secondClock;
+                            current.finalTime = current.midLeaveTime + secondRunningTime;
+
+                            Seats seat2;
+                            int nDay2 = current.midLeaveTime.date - secondEarliest.date;
+                            SeatFile.read(seat2,To[j].fileIndex * MaxDays + nDay2);
+                            int emptySeat2 = getSeats(seat2,k,terminalNum,secondTrain.seatNum);
+                            current.secondEmptySeat = emptySeat2;
+                        }else {
+                            //隔夜换乘
+                            int waitTime = secondClock.hour * 60 + secondClock.minute + 24 * 60 - firstClock.hour * 60 - firstClock.minute;
+                            int totalTime = firstRunningTime + secondRunningTime + waitTime;
+                            current.totalTime = totalTime;
+
+                            current.midLeaveTime.date = midArrive.date + 1;
+                            current.midLeaveTime.clock = secondClock;
+                            current.finalTime = current.midLeaveTime + secondRunningTime;
+
+                            Seats seat2;
+                            int nDay2 = current.midLeaveTime.date - secondEarliest.date;
+                            SeatFile.read(seat2,To[j].fileIndex * MaxDays + nDay2);
+                            int emptySeat2 = getSeats(seat2,k,terminalNum,secondTrain.seatNum);
+                            current.secondEmptySeat = emptySeat2;
+                        }
+                        if(SortWay == JaneZ::SortType::time) {
+                            if(TransferInfo::timeCmp(current,minTime)) {
+                                minTime = current;
+                                TimeFlag = true;
+                            }
+                        }else if(SortWay == JaneZ::SortType::cost) {
+                            if(TransferInfo::costCmp(current,minCost)) {
+                                minCost = current;
+                                CostFlag = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if(SortWay == JaneZ::SortType::time) {
+        if(!TimeFlag) {
+            std::cout << 0 << '\n';
+        }else {
+            printTransfer(s,t,minTime);
+        }
+    }else if(SortWay == JaneZ::SortType::cost) {
+        if(!CostFlag) {
+            std::cout << 0 << '\n';
+        }else {
+            printTransfer(s,t,minCost);
         }
     }
 }

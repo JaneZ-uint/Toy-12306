@@ -32,6 +32,8 @@ namespace JaneZ {
         Clock operator+(int m) const;
 
         int toMinutes() const;
+
+        int operator-(const Clock &other) const;
     };
 
     struct Date {
@@ -76,7 +78,21 @@ namespace JaneZ {
 
         TrainTime(Date &d,Clock &c);
 
+        TrainTime& operator=(const TrainTime &other);
+
+        bool operator==(const TrainTime &other) const;
+
+        bool operator<(const TrainTime &other) const;
+
+        bool operator<=(const TrainTime &other) const;
+
+        bool operator>(const TrainTime &other) const;
+
+        bool operator>=(const TrainTime &other) const;
+
         TrainTime &operator+(int m);
+
+        int operator-(const TrainTime &other) const;
     };
 
     inline std::ostream& operator<<(std::ostream& os, const Clock& clock) {

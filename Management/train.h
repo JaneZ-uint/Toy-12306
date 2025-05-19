@@ -149,6 +149,89 @@ struct CompCost {
     }
 };
 
+struct TransferInfo {
+    int totalTime;
+    int totalCost;
+    JaneZ::String<22> firstTrain;
+    JaneZ::TrainTime initialTime;
+    JaneZ::TrainTime midArriveTime;
+    JaneZ::String<22> secondTrain;
+    JaneZ::TrainTime midLeaveTime;
+    JaneZ::TrainTime finalTime;
+    JaneZ::String<42> midStationName;
+    int firstCost;
+    int secondCost;
+    int firstEmptySeat;
+    int secondEmptySeat;
+
+    TransferInfo():totalTime(1e9),totalCost(1e9){}
+
+    TransferInfo& operator=(const TransferInfo &other) {
+        if (this == &other) return *this;
+
+        totalTime = other.totalTime;
+        totalCost = other.totalCost;
+        firstCost = other.firstCost;
+        secondCost = other.secondCost;
+        firstEmptySeat = other.firstEmptySeat;
+        secondEmptySeat = other.secondEmptySeat;
+
+        firstTrain = other.firstTrain;
+        secondTrain = other.secondTrain;
+        midStationName = other.midStationName;
+        initialTime = other.initialTime;
+        midArriveTime = other.midArriveTime;
+        midLeaveTime = other.midLeaveTime;
+        finalTime = other.finalTime;
+
+        return *this;
+    }
+
+    static bool timeCmp(const TransferInfo &A,const TransferInfo &B) {
+        if(A.totalTime < B.totalTime) {
+            return true;
+        }else if(A.totalTime > B.totalTime) {
+            return false;
+        }
+        if(A.totalCost < B.totalCost) {
+            return true;
+        }else if(A.totalCost > B.totalCost) {
+            return false;
+        }
+        if(A.firstTrain < B.firstTrain) {
+            return true;
+        }else if(A.firstTrain > B.firstTrain) {
+            return false;
+        }
+        if(A.secondTrain < B.secondTrain) {
+            return true;
+        }
+        return false;
+    }
+
+    static bool costCmp(const TransferInfo &A,const TransferInfo &B) {
+        if(A.totalCost < B.totalCost) {
+            return true;
+        }else if(A.totalCost > B.totalCost) {
+            return false;
+        }
+        if(A.totalTime < B.totalTime) {
+            return true;
+        }else if(A.totalTime > B.totalTime) {
+            return false;
+        }
+        if(A.firstTrain < B.firstTrain) {
+            return true;
+        }else if(A.firstTrain > B.firstTrain) {
+            return false;
+        }
+        if(A.secondTrain < B.secondTrain) {
+            return true;
+        }
+        return false;
+    }
+};
+
 class TrainSystem {
 private:
     BPT<ull, int> TrainBase;//存储所有火车在TrainFile中的位置，无论发布与否
@@ -167,7 +250,7 @@ public:
         TrainFile.get_info(total,1);
     }
 
-    ~TrainSystem();
+    ~TrainSystem() = default;
 
     bool add_train(JaneZ::String<22> &trainID,
                    int stationNum,
@@ -190,6 +273,8 @@ public:
     int getSeats(Seats seat,int stIndex,int toIndex,int maxSeatsNUm);
 
     void query_ticket(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ::Date &d, JaneZ::SortType SortWay);
+
+    void printTransfer(JaneZ::String<42> &s, JaneZ::String<42> &t,TransferInfo &current);
 
     void query_transfer(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ::Date &d, JaneZ::SortType SortWay);
 
