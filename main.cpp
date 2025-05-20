@@ -135,10 +135,10 @@ int main(){
             JaneZ::String<42> startPlace(tmp.fromStation);
             JaneZ::String<42> endPlace(tmp.toStation);
             bool waitList = tmp.waitList;
-            ticket_system.buy_ticket(username,trainID,startDate,TicketNum,startPlace,endPlace,waitList);
+            ticket_system.buy_ticket(username,trainID,startDate,TicketNum,startPlace,endPlace,waitList,train_system,user_system,tmp.timeStamp);
         }else if(tmp.a == JaneZ::opType::query_order) {
             JaneZ::String<22> username(tmp.username);
-            ticket_system.query_order(username);
+            ticket_system.query_order(username,user_system,train_system);
         }else if(tmp.a == JaneZ::opType::refund_ticket) {
             JaneZ::String<22> username(tmp.username);
             int nOrder = tmp.nOrder;

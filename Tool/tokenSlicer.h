@@ -63,6 +63,7 @@ namespace JaneZ {
         std::string toStation;
         bool waitList;
         SortType SortWay;
+        int timeStamp;
     };
 }
 

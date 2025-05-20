@@ -4,6 +4,8 @@
 
 #ifndef TICKET_H
 #define TICKET_H
+#include "train.h"
+#include "user.h"
 #include "../Data Structure/BPT.h"
 #include "../Management/time.h"
 #include "../Data Structure/String.h"
@@ -12,38 +14,40 @@
 using ull = unsigned long long int;
 
 enum TicketPurchase {
-    Succeed, Queue, Fail
+    Succeed, Pending, Refunded
 };
 
 struct TicketInfo {
     JaneZ::String<22> username;
     JaneZ::String<22> trainID;
-    JaneZ::Date day;
+    JaneZ::TrainTime leaveTime;
     JaneZ::String<42> startStation;
     JaneZ::String<42> endStation;
     bool waitList = false;
     int num = 0;
     int timeCost = 0;
     int ticketPrice;
+    int timeStamp;//维护时间戳
+    TicketPurchase status;
 
     TicketInfo():num(0),timeCost(0){}
 
     TicketInfo(const TicketInfo &other) = default;
 
     bool operator==(const TicketInfo &other) const {
-        return timeCost == other.timeCost;
+        return timeStamp == other.timeStamp;
     }
 
     bool operator<(const TicketInfo &other) const {
-        return timeCost < other.timeCost;
+        return timeStamp < other.timeStamp;
     }
 
     bool operator<=(const TicketInfo &other) const {
-        return timeCost <= other.timeCost;
+        return timeStamp <= other.timeStamp;
     }
 
     bool operator>(const TicketInfo &other) const {
-        return timeCost > other.timeCost;
+        return timeStamp > other.timeStamp;
     }
 
     bool operator>=(const TicketInfo &other) const {
@@ -51,30 +55,35 @@ struct TicketInfo {
     }
 };
 
-struct BuyState {
-    TicketPurchase a;
-    int totalPrice;
+struct WaitTicket {
+    JaneZ::String<22> trainID;
+    JaneZ::Date StartDay;
 };
 
 class TicketSystem {
+    friend class TrainSystem;
+    friend class UserSystem;
 private:
-    BPT<ull, TicketInfo> FormalList;
-    BPT<ull, TicketInfo> WaitList;
+    BPT<ull, TicketInfo> FormalList;//所有订单（包括候补在内）
+    BPT<WaitTicket, TicketInfo> WaitList;//候补订单
 
 public:
     TicketSystem():FormalList("FormalListIndex","FormalListLeaf"),WaitList("WaitListIndex","WaitListLeaf"){}
 
-    ~TicketSystem();
+    ~TicketSystem() = default;
 
-    BuyState buy_ticket(JaneZ::String<22> &username,
+    void buy_ticket(JaneZ::String<22> &username,
                         JaneZ::String<22> &trainID,
                         JaneZ::Date &day,
                         int num,
                         JaneZ::String<42> &startStation,
                         JaneZ::String<42> &endStation,
-                        bool waitList = false);
+                        bool waitList = false,
+                        TrainSystem &train_system,
+                        UserSystem &user_system,
+                        int timeStamp);
 
-    void query_order(JaneZ::String<22> &username);
+    void query_order(JaneZ::String<22> &username,UserSystem &user_system,TrainSystem &train_system);
 
     bool refund_ticket(JaneZ::String<22> &username,int n = 1);
 

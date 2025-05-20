@@ -41,6 +41,7 @@ bool TrainSystem::add_train(JaneZ::String<22> &trainID, int stationNum, int seat
     current.saleEndDate = saleEndDate;
     current.type = type;
     current.is_released = false;
+    current.fileIndex = total;
     TrainFile.write(current,total);
     TrainBase.insert(HashID,total);
     ++ total;

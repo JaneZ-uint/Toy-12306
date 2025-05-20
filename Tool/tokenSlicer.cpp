@@ -79,9 +79,13 @@ JaneZ::Clock TokenSlicer::StringToClock(std::string &s) {
 void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
     int length = s.size();
     int i = 0;
+    std::string timeStamp;
     while(s[i] != ' ') {   //跳过时间戳
+        timeStamp += s[i];
         i ++;
     }
+    int time = StringToInteger(timeStamp);
+    info.timeStamp = time;
     ++ i;
     std::string operation;
     while(s[i] != ' ' || i != length) {

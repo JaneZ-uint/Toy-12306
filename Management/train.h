@@ -63,6 +63,7 @@ struct TrainInfo {
     JaneZ::Date saleEndDate;//停止售卖日期
     char type;//列车类型
     bool is_released = false;
+    int fileIndex;
 
     TrainInfo():is_released(false){}
 
@@ -233,6 +234,7 @@ struct TransferInfo {
 };
 
 class TrainSystem {
+    friend class TicketSystem;
 private:
     BPT<ull, int> TrainBase;//存储所有火车在TrainFile中的位置，无论发布与否
     MemoryRiver<TrainInfo,1> TrainFile;//存储所有火车信息，无论发布与否

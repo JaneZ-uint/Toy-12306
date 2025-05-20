@@ -57,6 +57,7 @@ struct UB {
 
 
 class UserSystem {
+    friend class TicketSystem;
 private:
     BPT<ull, int> UserBase;
     MemoryRiver<UserInfo,1> UserFile;
