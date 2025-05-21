@@ -74,7 +74,9 @@ void TicketSystem::buy_ticket(JaneZ::String<22> &username, JaneZ::String<22> &tr
         currentOrder.num = num;
         currentOrder.username = username;
         currentOrder.startStation = startStation;
+        currentOrder.stIndex = i;
         currentOrder.endStation = endStation;
+        currentOrder.enIndex = j;
         currentOrder.ticketPrice = currentTrain.stations[j].price - currentTrain.stations[i].price;
         currentOrder.timeCost = currentTrain.stations[j].travelTime - currentTrain.stations[i].travelTime - currentTrain.stations[i].stopoverTime;
         currentOrder.waitList = waitList;
@@ -96,7 +98,9 @@ void TicketSystem::buy_ticket(JaneZ::String<22> &username, JaneZ::String<22> &tr
             currentOrder.num = num;
             currentOrder.username = username;
             currentOrder.startStation = startStation;
+            currentOrder.stIndex = i;
             currentOrder.endStation = endStation;
+            currentOrder.enIndex = j;
             currentOrder.ticketPrice = currentTrain.stations[j].price - currentTrain.stations[i].price;
             currentOrder.timeCost = currentTrain.stations[j].travelTime - currentTrain.stations[i].travelTime - currentTrain.stations[i].stopoverTime;
             currentOrder.waitList = waitList;
@@ -119,8 +123,12 @@ void TicketSystem::query_order(JaneZ::String<22> &username,UserSystem &user_syst
         return;
     }
     sjtu::vector<TicketInfo> result = FormalList.find(HashUsername);
+    if(result.empty()) {
+        std::cout << -1 << '\n';
+        return;
+    }
     std::cout << result.size() << '\n';
-    for(int i = 0;i < result.size();i ++) {
+    for(int i = result.size() - 1;i >= 0;i --) {
         if(result[i].status == Succeed) {
             std::cout << "[success] ";
         }else if(result[i].status == Pending) {
@@ -139,6 +147,57 @@ void TicketSystem::query_order(JaneZ::String<22> &username,UserSystem &user_syst
     }
 }
 
-bool TicketSystem::refund_ticket(JaneZ::String<22> &username, int n) {
-    //TODO Wait to finish the last function!
+bool TicketSystem::refund_ticket(JaneZ::String<22> &username, int n,UserSystem &user_system,TrainSystem &train_system) {
+    ull HashUsername = JaneZ::Hash<22>::HashFunction(username);
+    if(user_system.LoginStack.find(HashUsername) == user_system.LoginStack.end()) {
+        return false;
+    }
+    sjtu::vector<TicketInfo> result = FormalList.find(HashUsername);
+    if(result.size() < n) {
+        return false;
+    }
+    TicketInfo refundOrder = result[result.size() - n];
+    if(refundOrder.status == Refunded) {
+        return false;
+    }
+    JaneZ::String<22> currentTrainID = refundOrder.trainID;
+    ull HashTrainID = JaneZ::Hash<22>::HashFunction(currentTrainID);
+    TrainInfo currentTrain;
+    sjtu::vector<int> posTmp = train_system.TrainBase.find(HashTrainID);
+    train_system.TrainFile.read(currentTrain,posTmp[0]);
+    int time = currentTrain.stations[refundOrder.stIndex].travelTime + currentTrain.stations[refundOrder.stIndex].stopoverTime;
+    JaneZ::TrainTime earliestStart(currentTrain.saleStartDate,currentTrain.startTime);
+    JaneZ::TrainTime earliestLeave = earliestStart + time;
+    int nDay = refundOrder.leaveTime.date - earliestLeave.date;
+    WaitTicket currentPending;
+    currentPending.trainID = refundOrder.trainID;
+    currentPending.StartDay = currentTrain.saleStartDate + nDay;
+    if(refundOrder.status == Pending) {
+        WaitList.erase(currentPending,refundOrder);//现在还不能改refundOrder
+    }else if(refundOrder.status == Succeed) {
+        Seats seat;
+        train_system.SeatFile.read(seat,currentTrain.fileIndex * train_system.MaxDays + nDay);
+        seat.DeltaSeatNum[refundOrder.stIndex] += refundOrder.num;
+        seat.DeltaSeatNum[refundOrder.enIndex] -= refundOrder.num;
+        sjtu::vector<TicketInfo> waitingOrder = WaitList.find(currentPending);
+        for(int i = 0;i < waitingOrder.size();i ++) {
+            int stIndex = waitingOrder[i].stIndex;
+            int enIndex = waitingOrder[i].enIndex;
+            int emptySeats = train_system.getSeats(seat,stIndex,enIndex,currentTrain.seatNum);
+            if(emptySeats >= waitingOrder[i].num) {
+                seat.DeltaSeatNum[stIndex] -= waitingOrder[i].num;
+                seat.DeltaSeatNum[enIndex] += waitingOrder[i].num;
+                waitingOrder[i].status = Succeed;
+                WaitList.erase(currentPending,waitingOrder[i]);
+                ull HashWaitUser = JaneZ::Hash<22>::HashFunction(waitingOrder[i].username);
+                FormalList.erase(HashWaitUser,waitingOrder[i]);
+                FormalList.insert(HashWaitUser,waitingOrder[i]);
+            }
+        }
+        train_system.SeatFile.write(seat,currentTrain.fileIndex * train_system.MaxDays + nDay);
+    }
+    refundOrder.status = Refunded;
+    FormalList.erase(HashUsername,refundOrder);
+    FormalList.insert(HashUsername,refundOrder);
+    return true;
 }

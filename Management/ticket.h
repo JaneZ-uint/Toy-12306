@@ -20,9 +20,11 @@ enum TicketPurchase {
 struct TicketInfo {
     JaneZ::String<22> username;
     JaneZ::String<22> trainID;
-    JaneZ::TrainTime leaveTime;
+    JaneZ::TrainTime leaveTime;//从当前站出发的时间
     JaneZ::String<42> startStation;
+    int stIndex;
     JaneZ::String<42> endStation;
+    int enIndex;
     bool waitList = false;
     int num = 0;
     int timeCost = 0;
@@ -58,6 +60,30 @@ struct TicketInfo {
 struct WaitTicket {
     JaneZ::String<22> trainID;
     JaneZ::Date StartDay;
+
+    bool operator==(const WaitTicket& other) const{
+        return trainID == other.trainID && StartDay == other.StartDay;
+    }
+
+    bool operator<(const WaitTicket& other) const{
+        if (trainID < other.trainID) {
+            return true;
+        }
+        if (trainID == other.trainID) {
+            return StartDay < other.StartDay;
+        }
+        return false;
+    }
+
+    bool operator>(const WaitTicket& other) const{
+        if (trainID > other.trainID) {
+            return true;
+        }
+        if (trainID == other.trainID) {
+            return StartDay > other.StartDay;
+        }
+        return false;
+    }
 };
 
 class TicketSystem {
@@ -78,14 +104,14 @@ public:
                         int num,
                         JaneZ::String<42> &startStation,
                         JaneZ::String<42> &endStation,
-                        bool waitList = false,
+                        bool waitList,
                         TrainSystem &train_system,
                         UserSystem &user_system,
                         int timeStamp);
 
     void query_order(JaneZ::String<22> &username,UserSystem &user_system,TrainSystem &train_system);
 
-    bool refund_ticket(JaneZ::String<22> &username,int n = 1);
+    bool refund_ticket(JaneZ::String<22> &username,int n,UserSystem &user_system,TrainSystem &train_system);
 
     static void clean() {
         // 删除正式列表的索引和叶子文件

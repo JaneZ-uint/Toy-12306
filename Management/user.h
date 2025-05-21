@@ -86,10 +86,12 @@ public:
     UB modify_profile(JaneZ::String<22> &currentUsername, JaneZ::String<22> &username, JaneZ::String<32> &password,
                       JaneZ::String<22> &name, JaneZ::String<32> &mailAddr, int privilege);
 
-    static void clean() {
+    void clean() {
         // 删除用户数据的索引和叶子文件
         std::remove("UserBaseIndex");
         std::remove("UserBaseLeaf");
+
+        LoginStack.clear();
     }
 };
 #endif //USER_H

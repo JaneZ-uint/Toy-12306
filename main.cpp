@@ -142,9 +142,13 @@ int main(){
         }else if(tmp.a == JaneZ::opType::refund_ticket) {
             JaneZ::String<22> username(tmp.username);
             int nOrder = tmp.nOrder;
-            ticket_system.refund_ticket(username,nOrder);
+            if(ticket_system.refund_ticket(username,nOrder,user_system,train_system)) {
+                std::cout << 0 <<'\n';
+            }else {
+                std::cout << -1 << '\n';
+            }
         }else if(tmp.a == JaneZ::opType::clean) {
-            UserSystem::clean();
+            user_system.clean();
             TrainSystem::clean();
             TicketSystem::clean();
             std::cout << "0" << '\n';

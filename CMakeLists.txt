@@ -3,7 +3,7 @@ project(Toy12306)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(Toy12306 main.cpp
+add_executable(code main.cpp
         "Data Structure/BPT.h"
         "Data Structure/vector.h"
         "Data Structure/list.h"
@@ -21,4 +21,10 @@ add_executable(Toy12306 main.cpp
         Management/time.h
         Management/time.cpp
         Tool/HashFunction.h
-        "Data Structure/map.h")
+        "Data Structure/map.h"
+        Tool/tokenSlicer.h
+        Tool/tokenSlicer.cpp
+        "Data Structure/utility.h"
+        Tool/MemoryRiver.h
+        "Data Structure/priority_queue.h"
+)
