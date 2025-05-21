@@ -81,14 +81,16 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
     int i = 0;
     std::string timeStamp;
     while(s[i] != ' ') {   //跳过时间戳
-        timeStamp += s[i];
+        if(s[i] != '[' && s[i] != ']') {
+            timeStamp += s[i];
+        }
         i ++;
     }
     int time = StringToInteger(timeStamp);
     info.timeStamp = time;
     ++ i;
     std::string operation;
-    while(s[i] != ' ' || i != length) {
+    while(i != length && s[i] != ' ') {
         operation += s[i];
         ++ i;
     }
@@ -98,42 +100,42 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
             std::string tmp;
             if(s[i + 2] == 'c') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.cur_username = tmp;
             }else if(s[i + 2] == 'u') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.username = tmp;
             }else if(s[i + 2] == 'p') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.password = tmp;
             }else if(s[i + 2] == 'n') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.name = tmp;
             }else if(s[i + 2] == 'm') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.mail = tmp;
             }else if(s[i + 2] == 'g') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
@@ -146,14 +148,14 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
             std::string tmp;
             if(s[i + 2] == 'u') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.username = tmp;
             }else if(s[i + 2] == 'p') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
@@ -164,7 +166,7 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
         info.a = JaneZ::logout;
         i += 4;
         std::string tmp;
-        while(s[i] != ' ' || i != length) {
+        while(i != length && s[i] != ' ') {
             tmp += s[i];
             ++ i;
         }
@@ -175,14 +177,14 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
             std::string tmp;
             if(s[i + 2] == 'c') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.cur_username = tmp;
             }else if(s[i + 2] == 'u') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
@@ -196,42 +198,42 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
             std::string tmp;
             if(s[i + 2] == 'c') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.cur_username = tmp;
             }else if(s[i + 2] == 'u') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.username = tmp;
             }else if(s[i + 2] == 'p') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.password = tmp;
             }else if(s[i + 2] == 'n') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.name = tmp;
             }else if(s[i + 2] == 'm') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.mail = tmp;
             }else if(s[i + 2] == 'g') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
@@ -244,63 +246,63 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
             std::string tmp;
             if(s[i + 2] == 'i') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.ID = tmp;
             }else if(s[i + 2] == 'n') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.StationNum = StringToInteger(tmp);
             }else if(s[i + 2] == 'm') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.SeatNum = StringToInteger(tmp);
             }else if(s[i + 2] == 's') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.Stations = StringToVectorString(tmp);
             }else if(s[i + 2] == 'p') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.prices = StringToVectorInt(tmp);
             }else if(s[i + 2] == 'x') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.startTime = StringToClock(tmp);
             }else if(s[i + 2] == 't') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.travelTimes = StringToVectorInt(tmp);
             }else if(s[i + 2] == 'o') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.stopoverTimes = StringToVectorInt(tmp);
             }else if(s[i + 2] == 'd') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
@@ -309,7 +311,7 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
                 info.saleEndDate = StringToDate(tmpPair[1]);
             }else if(s[i + 2] == 'y') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
@@ -320,7 +322,7 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
         info.a = JaneZ::delete_train;
         i += 4;
         std::string tmp;
-        while(s[i] != ' ' || i != length) {
+        while(i != length && s[i] != ' ') {
             tmp += s[i];
             ++ i;
         }
@@ -329,7 +331,7 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
         info.a = JaneZ::release_train;
         i += 4;
         std::string tmp;
-        while(s[i] != ' ' || i != length) {
+        while(i != length && s[i] != ' ') {
             tmp += s[i];
             ++ i;
         }
@@ -338,7 +340,7 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
         info.a = JaneZ::query_train;
         i += 4;
         std::string tmp;
-        while(s[i] != ' ' || i != length) {
+        while(i != length && s[i] != ' ') {
             tmp += s[i];
             ++ i;
         }
@@ -350,28 +352,28 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
             std::string tmp;
             if(s[i + 2] == 's') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.fromStation = tmp;
             }else if(s[i + 2] == 't') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.toStation = tmp;
             }else if(s[i + 2] == 'd') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.SpecificStationDate = StringToDate(tmp);
             }else if(s[i + 2] == 'p') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
@@ -389,28 +391,28 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
             std::string tmp;
             if(s[i + 2] == 's') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.fromStation = tmp;
             }else if(s[i + 2] == 't') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.toStation = tmp;
             }else if(s[i + 2] == 'd') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.SpecificStationDate = StringToDate(tmp);
             }else if(s[i + 2] == 'p') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
@@ -428,49 +430,49 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
             std::string tmp;
             if(s[i + 2] == 'u') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.username = tmp;
             }else if(s[i + 2] == 'i') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.ID = tmp;
             }else if(s[i + 2] == 'd') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.SpecificStationDate = StringToDate(tmp);
             }else if(s[i + 2] == 'n') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.buyNumber = StringToInteger(tmp);
             }else if(s[i + 2] == 'f') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.fromStation = tmp;
             }else if(s[i + 2] == 't') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.toStation = tmp;
             }else if(s[i + 2] == 'q') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
@@ -485,7 +487,7 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
         info.a = JaneZ::query_order;
         i += 4;
         std::string tmp;
-        while(s[i] != ' ' || i != length) {
+        while(i != length && s[i] != ' ') {
             tmp += s[i];
             ++ i;
         }
@@ -497,14 +499,14 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
             std::string tmp;
             if(s[i + 2] == 'u') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }
                 info.username = tmp;
             }else if(s[i + 2] == 'n') {
                 i += 4;
-                while(s[i] != ' ' || i != length) {
+                while(i != length && s[i] != ' ') {
                     tmp += s[i];
                     ++ i;
                 }

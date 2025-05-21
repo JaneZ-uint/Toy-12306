@@ -16,6 +16,7 @@ int main(){
         TokenSlicer knife(op);
         JaneZ::TotalInfo tmp;
         knife.SliceTokens(op,tmp);
+        std::cout << '[' << tmp.timeStamp << ']' << " ";
         if(tmp.a == JaneZ::opType::add_user) {
             JaneZ::String<22> curUsername(tmp.cur_username);
             JaneZ::String<22> username(tmp.username);
