@@ -7,7 +7,7 @@ using ull = unsigned long long int;
 bool UserSystem::add_user(JaneZ::String<22> &currentUsername, JaneZ::String<22> &username, JaneZ::String<32> &password, JaneZ::String<22> &name, JaneZ::String<32> &mailAddr, int privilege) {
     if(UserBase.empty()) {
         ull HashUsername = JaneZ::Hash<22>::HashFunction(username);
-        LoginStack.insert({HashUsername,true});
+        //LoginStack.insert({HashUsername,true});不代表已经登录
         UserInfo firstUser;
         firstUser.username = username;
         firstUser.password = password;
@@ -101,7 +101,10 @@ UB UserSystem::query_profile(JaneZ::String<22> &currentUsername, JaneZ::String<2
     if(curInfo.privilege < info.privilege) {
         Query.canBeOperated = false;
         return Query;
-    }
+    }else if(curInfo.privilege == info.privilege && curInfo.username != info.username) {
+        Query.canBeOperated = false;
+        return Query;
+    }//-c 的权限大于 -u 的权限，或是 -c 和 -u 相同」!!!(不是权限相同，是同一个号的意思
     Query.Info.username = username;
     Query.Info.password = info.password;
     Query.Info.name = info.name;
@@ -132,7 +135,14 @@ UB UserSystem::modify_profile(JaneZ::String<22> &currentUsername, JaneZ::String<
     if(curInfo.privilege < info.privilege) {
         Query.canBeOperated = false;
         return Query;
-    }
+    }else if(curInfo.privilege == info.privilege && curInfo.username != info.username) {
+        Query.canBeOperated = false;
+        return Query;
+    }//-c 的权限大于 -u 的权限，或是 -c 和 -u 相同」!!!(不是权限相同，是同一个号的意思
+    if(privilege >= curInfo.privilege) {
+        Query.canBeOperated = false;
+        return Query;
+    }// -g 需低于 -c 的权限
     Query.Info.username = username;
     if(password != "\0") {
         Query.Info.password = password;

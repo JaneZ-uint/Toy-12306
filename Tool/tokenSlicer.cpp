@@ -36,7 +36,7 @@ sjtu::vector<std::string> TokenSlicer::StringToVectorString(std::string &s) {
             ++ i;
         }
         std::string tmp;
-        while(s[i] != '|') {
+        while(i != length && s[i] != '|') {
             tmp += s[i];
             ++ i;
         }
@@ -54,7 +54,7 @@ sjtu::vector<int> TokenSlicer::StringToVectorInt(std::string &s) {
             ++ i;
         }
         std::string tmp;
-        while(s[i] != '|') {
+        while(i != length && s[i] != '|') {
             tmp += s[i];
             ++ i;
         }

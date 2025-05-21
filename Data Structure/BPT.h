@@ -52,6 +52,7 @@ private:
 
     struct LeafFileHeader{
         int first_free;
+        int sum_data;//多维护一个数据总和
     };
     const int LeafFileHeaderSize = sizeof(LeafFileHeader);
 
@@ -101,6 +102,7 @@ private:
     IndexNode root;
     int nextIndexNodePos;
     int nextLeafNodePos;
+    int total_num = 0;
     LRUCache<int,IndexNode> IndexCache;
     LRUCache<int,LeafNode> LeafCache;
 
@@ -149,6 +151,7 @@ private:
         root.keyNum = 0;
         root.pos = 1;
         root.ChildPointer[0] = 1;
+        total_num = 0;
         nextIndexNodePos = 1;
         nextLeafNodePos = 1;
         LeafNode FirstLeaf;
@@ -176,10 +179,11 @@ private:
         //indexTree.seekg(IndexFileHeaderSize + tmp1.root_pos * sizeof(IndexNode));
         //indexTree.read(reinterpret_cast<char*>(&root), sizeof(IndexNode));
         nextLeafNodePos = tmp2.first_free;
+        total_num = tmp2.sum_data;
     }
     void UpdateMetaData() {
         IndexFileHeader tmp1(root.pos,nextIndexNodePos);
-        LeafFileHeader tmp2(nextLeafNodePos);
+        LeafFileHeader tmp2(nextLeafNodePos,total_num);
         indexTree.seekp(0);
         indexTree.write(reinterpret_cast<char*>(&tmp1),IndexFileHeaderSize);
         writeIndexNode(root);
@@ -387,6 +391,7 @@ private:
             if(idx == -1) {
                 return false;//插入节点原本就存在
             }
+            total_num ++;
             for(int i = search.num;i > idx;i --) {
                 search.Info[i] = search.Info[i - 1];
             }
@@ -538,6 +543,7 @@ private:
                 target.Info[i] = target.Info[i + 1];
             }
             target.num --;
+            total_num --;
             if(target.num < L/2) { //太少了需要借或者并块
                 // 首先考虑从右边的块那儿借一个
                 bool rightBlock = false;
@@ -699,7 +705,7 @@ public:
         leaf.seekp(0);
         IndexFileHeader tmp1(root.pos,nextIndexNodePos);
         indexTree.write(reinterpret_cast<char*>(&tmp1),IndexFileHeaderSize);
-        LeafFileHeader tmp2(nextLeafNodePos);
+        LeafFileHeader tmp2(nextLeafNodePos,total_num);
         leaf.write(reinterpret_cast<char*>(&tmp2),LeafFileHeaderSize);
         writeIndexNode(root);
         closeFile();
@@ -767,7 +773,7 @@ public:
     }
 
     bool empty() {
-        return root.is_leaf && root.keyNum == 0;
+        return total_num == 0;
     }
 };
 #endif //BPT_H
