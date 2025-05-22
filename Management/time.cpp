@@ -230,16 +230,21 @@ bool JaneZ::TrainTime::operator>=(const TrainTime &other) const {
     return !(*this < other);
 }
 
-JaneZ::TrainTime &JaneZ::TrainTime::operator+(int m){
-    clock.minute += m;
-    clock.hour += clock.minute / 60;
-    clock.minute %= 60;
-    int days = clock.hour / 24;
-    clock.hour %= 24;
+JaneZ::TrainTime JaneZ::TrainTime::AddMinutes(const JaneZ::TrainTime &time, int minutes) {
+    JaneZ::TrainTime result = time;
+    result.clock.minute += minutes;
+    result.clock.hour += result.clock.minute / 60;
+    result.clock.minute %= 60;
+    int days = result.clock.hour / 24;
+    result.clock.hour %= 24;
     for (int i = 0; i < days; ++i) {
-        ++date;
+        ++result.date;
     }
-    return *this;
+    return result;
+}
+
+JaneZ::TrainTime JaneZ::TrainTime::operator+(int m){
+    return AddMinutes(*this, m);
 }
 
 int JaneZ::TrainTime::operator-(const TrainTime &other) const {

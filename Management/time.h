@@ -90,7 +90,9 @@ namespace JaneZ {
 
         bool operator>=(const TrainTime &other) const;
 
-        TrainTime &operator+(int m);
+        static JaneZ::TrainTime AddMinutes(const JaneZ::TrainTime& time, int minutes);
+
+        TrainTime operator+(int m);
 
         int operator-(const TrainTime &other) const;
     };

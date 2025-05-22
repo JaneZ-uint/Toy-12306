@@ -104,9 +104,7 @@ bool TrainSystem::query_train(JaneZ::String<22> &trainID, JaneZ::Date &date) {
     TrainInfo current;
     TrainFile.read(current,posTmp[0]);
     current.trainID = trainID;
-    JaneZ::TrainTime BeginTIme;
-    BeginTIme.date = date;
-    BeginTIme.clock = current.startTime;
+    JaneZ::TrainTime BeginTime(date,current.startTime);
     if(date > current.saleEndDate || date < current.saleStartDate) {
         return false;
     }
@@ -119,14 +117,14 @@ bool TrainSystem::query_train(JaneZ::String<22> &trainID, JaneZ::Date &date) {
         std::cout << current.stations[i].stationName << " ";
         if(i == 0) {
             std::cout << "xx-xx xx:xx -> ";
-            std::cout << BeginTIme << " ";
+            std::cout << BeginTime << " ";
         }else if(i == current.stationNum - 1) {
-            JaneZ::TrainTime currentTime = BeginTIme + current.stations[i].travelTime;
+            JaneZ::TrainTime currentTime = BeginTime + current.stations[i].travelTime;
             std::cout << currentTime << " ";
             std::cout << "->" << " ";
             std::cout << "xx-xx xx:xx ";
         }else {
-            JaneZ::TrainTime currentTime = BeginTIme + current.stations[i].travelTime;
+            JaneZ::TrainTime currentTime = BeginTime + current.stations[i].travelTime;
             std::cout << currentTime << " ";
             std::cout << "->" << " ";
             JaneZ::TrainTime leavingTime = currentTime + current.stations[i].stopoverTime;

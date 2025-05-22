@@ -11,6 +11,7 @@ int main(){
     UserSystem user_system;
     TrainSystem train_system;
     TicketSystem ticket_system;
+    //freopen("ans.txt", "w", stdout);
     while (true) {
         std::getline(std::cin,op);
         TokenSlicer knife(op);

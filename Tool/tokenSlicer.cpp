@@ -338,13 +338,24 @@ void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
         info.ID = tmp;
     }else if(operation == "query_train") {
         info.a = JaneZ::query_train;
-        i += 4;
-        std::string tmp;
-        while(i != length && s[i] != ' ') {
-            tmp += s[i];
-            ++ i;
+        while(i != length) {
+            std::string tmp;
+            if(s[i + 2] == 'i') {
+                i += 4;
+                while(i != length && s[i] != ' ') {
+                    tmp += s[i];
+                    ++ i;
+                }
+                info.ID = tmp;
+            }else if(s[i + 2] == 'd') {
+                i += 4;
+                while(i != length && s[i] != ' ') {
+                    tmp += s[i];
+                    ++ i;
+                }
+                info.BeginDate = StringToDate(tmp);
+            }
         }
-        info.ID = tmp;
     }else if(operation == "query_ticket") {
         info.a = JaneZ::query_ticket;
         info.SortWay = JaneZ::SortType::time;

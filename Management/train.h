@@ -135,18 +135,18 @@ struct TimeCostInfo {
 struct CompTime {
     bool operator()(const TimeCostInfo& a, const TimeCostInfo& b) const {
         if (a.totalTime != b.totalTime) {
-            return a.totalTime < b.totalTime;
+            return a.totalTime > b.totalTime;
         }
-        return a.trainID < b.trainID;
+        return a.trainID > b.trainID;
     }
 };
 
 struct CompCost {
     bool operator()(const TimeCostInfo& a, const TimeCostInfo& b) const {
         if (a.totalCost != b.totalCost) {
-            return a.totalCost < b.totalCost;
+            return a.totalCost > b.totalCost;
         }
-        return a.trainID < b.trainID;
+        return a.trainID > b.trainID;
     }
 };
 
