@@ -107,7 +107,7 @@ bool TrainSystem::query_train(JaneZ::String<22> &trainID, JaneZ::Date &date) {
     JaneZ::TrainTime BeginTIme;
     BeginTIme.date = date;
     BeginTIme.clock = current.startTime;
-    if(date > current.saleEndDate) {
+    if(date > current.saleEndDate || date < current.saleStartDate) {
         return false;
     }
     int nDay = date - current.saleStartDate;//0 base
@@ -155,14 +155,14 @@ bool TrainSystem::query_train(JaneZ::String<22> &trainID, JaneZ::Date &date) {
 int TrainSystem::getSeats(Seats seat, int stIndex, int toIndex, int maxSeatsNUm) {
     int delta = 0;
     int min = 100005;
-    for(int i = stIndex + 1;i <= toIndex;i ++) {
+    for(int i = stIndex ;i < toIndex;i ++) {
         delta += seat.DeltaSeatNum[i];
         if(delta < min) {
             min = delta;
         }
     }
     int stSeat = maxSeatsNUm;
-    for(int i = 0;i <= stIndex;i ++) {
+    for(int i = 0;i < stIndex;i ++) {
         stSeat += seat.DeltaSeatNum[i];
     }
     return stSeat + min;
@@ -179,11 +179,11 @@ void TrainSystem::query_ticket(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ
     size_t to = 0;
     sjtu::vector<StationValuePair> possibleSolution;
     while(st < startTotalNum && to < toTotalNum) {
-        if(Start[st] < To[to]) {
+        if(Start[st].fileIndex < To[to].fileIndex) {
             st ++;
             continue;
         }
-        if(Start[st] > To[to]) {
+        if(Start[st].fileIndex > To[to].fileIndex) {
             to ++;
             continue;
         }
@@ -196,6 +196,8 @@ void TrainSystem::query_ticket(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ
         now.st = Start[st];
         now.to = To[to];
         possibleSolution.push_back(now);
+        st ++;
+        to ++;
     }
     sjtu::priority_queue<TimeCostInfo,CompTime> timePQ;
     sjtu::priority_queue<TimeCostInfo,CompCost> costPQ;
@@ -248,7 +250,7 @@ void TrainSystem::query_ticket(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ
             std::cout << getSeats(seat,topValue1.nStation,topValue2.nStation,topValue1.MaxSeatsNum) << '\n';
         }
     }else if(SortWay == JaneZ::SortType::cost) {
-        std::cout << timePQ.size() << '\n';
+        std::cout << costPQ.size() << '\n';
         while(!costPQ.empty()) {
             TimeCostInfo top = costPQ.top();
             costPQ.pop();

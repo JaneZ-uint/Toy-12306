@@ -96,12 +96,12 @@ namespace JaneZ {
     };
 
     inline std::ostream& operator<<(std::ostream& os, const Clock& clock) {
-        os << clock.hour << ":" << (clock.minute < 10 ? "0" : "") << clock.minute;
+        os << (clock.hour < 10 ? "0" : "") << clock.hour << ":" << (clock.minute < 10 ? "0" : "") << clock.minute;
         return os;
     }
 
     inline std::ostream& operator<<(std::ostream& os, const Date& date) {
-        os << date.month << "-" << (date.day < 10 ? "0" : "") << date.day;
+        os << (date.month < 10 ? "0" : "") << date.month << "-" << (date.day < 10 ? "0" : "") << date.day;
         return os;
     }
 

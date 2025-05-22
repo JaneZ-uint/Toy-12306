@@ -66,10 +66,11 @@ void TicketSystem::buy_ticket(JaneZ::String<22> &username, JaneZ::String<22> &tr
     train_system.SeatFile.read(seat,currentTrain.fileIndex * train_system.MaxDays + nDay);
     int emptySeat = train_system.getSeats(seat,i,j,currentTrain.seatNum);
     if(emptySeat >= num) {
-        seat.DeltaSeatNum[i] += num;
-        seat.DeltaSeatNum[j] -= num;
+        seat.DeltaSeatNum[i] -= num;
+        seat.DeltaSeatNum[j] += num;
         int totalPrice = num * (currentTrain.stations[j].price - currentTrain.stations[i].price);
         TicketInfo currentOrder;
+        currentOrder.trainID = trainID;
         currentOrder.leaveTime = startTime + currentTrain.stations[i].travelTime + currentTrain.stations[i].stopoverTime;
         currentOrder.num = num;
         currentOrder.username = username;
@@ -94,6 +95,7 @@ void TicketSystem::buy_ticket(JaneZ::String<22> &username, JaneZ::String<22> &tr
             std::cout << "queue" << '\n';
             //int totalPrice = num * (currentTrain.stations[j].price - currentTrain.stations[i].price);
             TicketInfo currentOrder;
+            currentOrder.trainID = trainID;
             currentOrder.leaveTime = startTime + currentTrain.stations[i].travelTime + currentTrain.stations[i].stopoverTime;
             currentOrder.num = num;
             currentOrder.username = username;
@@ -123,10 +125,6 @@ void TicketSystem::query_order(JaneZ::String<22> &username,UserSystem &user_syst
         return;
     }
     sjtu::vector<TicketInfo> result = FormalList.find(HashUsername);
-    if(result.empty()) {
-        std::cout << -1 << '\n';
-        return;
-    }
     std::cout << result.size() << '\n';
     for(int i = result.size() - 1;i >= 0;i --) {
         if(result[i].status == Succeed) {
