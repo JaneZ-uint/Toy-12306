@@ -72,7 +72,7 @@ bool TrainSystem::release_train(JaneZ::String<22> &trainID) {
     TrainInfo current;
     TrainFile.read(current,posTmp[0]);
     if(current.is_released) {
-        return false;  //Wait for TA
+        return false;
     }
     current.is_released = true;
     TrainFile.write(current,posTmp[0]);
@@ -325,7 +325,7 @@ void TrainSystem::query_transfer(JaneZ::String<42> &s, JaneZ::String<42> &t, Jan
                 continue;
             }
             TrainInfo secondTrain;
-            TrainFile.read(secondTrain,To[i].fileIndex);
+            TrainFile.read(secondTrain,To[j].fileIndex);
             //检查secondTrain是否在可行时间范围内
 
             int terminalNum = To[j].nStation;
