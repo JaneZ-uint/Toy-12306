@@ -289,6 +289,7 @@ void TrainSystem::printTransfer(JaneZ::String<42> &s, JaneZ::String<42> &t,Trans
     std::cout << current.midStationName << " ";
     std::cout << current.midLeaveTime << " ";
     std::cout << "-> ";
+    std::cout << t << " ";
     std::cout << current.finalTime << " ";
     std::cout << current.secondCost << " ";
     std::cout << current.secondEmptySeat << '\n';
@@ -363,7 +364,7 @@ void TrainSystem::query_transfer(JaneZ::String<42> &s, JaneZ::String<42> &t, Jan
                         current.firstTrain = firstTrain.trainID;
                         current.secondTrain = secondTrain.trainID;
 
-                        current.initialTime = firstTrainStart;
+                        current.initialTime = firstTrainStart + Departure.travelTime + Departure.stopoverTime;
                         current.midArriveTime = midArrive;
                         current.midLeaveTime = secondEarliest;
                         current.finalTime = secondEarliest + secondRunningTime;
@@ -409,7 +410,7 @@ void TrainSystem::query_transfer(JaneZ::String<42> &s, JaneZ::String<42> &t, Jan
                         current.firstTrain = firstTrain.trainID;
                         current.secondTrain = secondTrain.trainID;
 
-                        current.initialTime = firstTrainStart;
+                        current.initialTime = firstTrainStart + Departure.travelTime + Departure.stopoverTime;
                         current.midArriveTime = midArrive;
 
                         current.midStationName = midStation1.stationName;
