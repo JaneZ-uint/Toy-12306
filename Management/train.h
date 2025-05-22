@@ -252,7 +252,9 @@ public:
         TrainFile.get_info(total,1);
     }
 
-    ~TrainSystem() = default;
+    ~TrainSystem() {
+        TrainFile.write_info(total,1);
+    }
 
     bool add_train(JaneZ::String<22> &trainID,
                    int stationNum,
