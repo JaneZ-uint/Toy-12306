@@ -58,20 +58,21 @@ struct UB {
 
 class UserSystem {
     friend class TicketSystem;
+
 private:
     BPT<ull, int> UserBase;
-    MemoryRiver<UserInfo,1> UserFile;
+    MemoryRiver<UserInfo, 1> UserFile;
     sjtu::map<ull, bool> LoginStack;
     int total = 0;
 
 public:
-    UserSystem():UserBase("UserBaseIndex","UserBaseLeaf") {
+    UserSystem(): UserBase("UserBaseIndex", "UserBaseLeaf") {
         UserFile.initialise("user_info.txt");
-        UserFile.get_info(total,1);
+        UserFile.get_info(total, 1);
     }
 
     ~UserSystem() {
-        UserFile.write_info(total,1);
+        UserFile.write_info(total, 1);
     }
 
     bool add_user(JaneZ::String<22> &currentUsername, JaneZ::String<22> &username, JaneZ::String<32> &password,

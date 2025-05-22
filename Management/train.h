@@ -15,7 +15,7 @@
 using ull = unsigned long long int;
 
 struct StationInfo {
-    JaneZ::String<42> stationName;//NJN
+    JaneZ::String<42> stationName; //NJN
     /*以 SH-NJ-BJ为例
      * stations[0].prices = 0
      * stations[1].prices = SH-NJ 票价
@@ -40,7 +40,7 @@ struct StationInfo {
     /*依然以 SH-NJ-BJ为例
      * stations[i].stationIndex = i;
      */
-    int stationIndex;//沿线的第几站
+    int stationIndex; //沿线的第几站
 };
 
 struct Seats {
@@ -54,18 +54,19 @@ struct Seats {
 };
 
 struct TrainInfo {
-    JaneZ::String<22> trainID;//列车车次
-    int stationNum;//停站数 （SH-NJ-BJ 为3站）
+    JaneZ::String<22> trainID; //列车车次
+    int stationNum; //停站数 （SH-NJ-BJ 为3站）
     StationInfo stations[102];
-    int seatNum;//总座位数
-    JaneZ::Clock startTime;//每日发车时间
-    JaneZ::Date saleStartDate;//开始售卖日期
-    JaneZ::Date saleEndDate;//停止售卖日期
-    char type;//列车类型
+    int seatNum; //总座位数
+    JaneZ::Clock startTime; //每日发车时间
+    JaneZ::Date saleStartDate; //开始售卖日期
+    JaneZ::Date saleEndDate; //停止售卖日期
+    char type; //列车类型
     bool is_released = false;
     int fileIndex;
 
-    TrainInfo():is_released(false){}
+    TrainInfo(): is_released(false) {
+    }
 
     TrainInfo(const TrainInfo &other) = default;
 
@@ -97,8 +98,8 @@ struct TrainInfo {
 struct StationValue {
     JaneZ::String<42> stationName;
     JaneZ::String<22> trainID;
-    int fileIndex;//源信息在TrainFile中的位置
-    int nStation;//第几站
+    int fileIndex; //源信息在TrainFile中的位置
+    int nStation; //第几站
     int arrivingTimeCost;
     int leavingTimeCost;
     int price;
@@ -107,11 +108,11 @@ struct StationValue {
     JaneZ::Date saleEndDate;
     JaneZ::Clock StartClock;
 
-    bool operator<(const StationValue &other) const{
+    bool operator<(const StationValue &other) const {
         return fileIndex < other.fileIndex;
     }
 
-    bool operator>(const StationValue &other) const{
+    bool operator>(const StationValue &other) const {
         return fileIndex > other.fileIndex;
     }
 
@@ -129,11 +130,11 @@ struct TimeCostInfo {
     int totalTime;
     int totalCost;
     JaneZ::String<22> trainID;
-    int index;//数组下标
+    int index; //数组下标
 };
 
 struct CompTime {
-    bool operator()(const TimeCostInfo& a, const TimeCostInfo& b) const {
+    bool operator()(const TimeCostInfo &a, const TimeCostInfo &b) const {
         if (a.totalTime != b.totalTime) {
             return a.totalTime > b.totalTime;
         }
@@ -142,7 +143,7 @@ struct CompTime {
 };
 
 struct CompCost {
-    bool operator()(const TimeCostInfo& a, const TimeCostInfo& b) const {
+    bool operator()(const TimeCostInfo &a, const TimeCostInfo &b) const {
         if (a.totalCost != b.totalCost) {
             return a.totalCost > b.totalCost;
         }
@@ -165,9 +166,10 @@ struct TransferInfo {
     int firstEmptySeat;
     int secondEmptySeat;
 
-    TransferInfo():totalTime(1e9),totalCost(1e9){}
+    TransferInfo(): totalTime(1e9), totalCost(1e9) {
+    }
 
-    TransferInfo& operator=(const TransferInfo &other) {
+    TransferInfo &operator=(const TransferInfo &other) {
         if (this == &other) return *this;
 
         totalTime = other.totalTime;
@@ -188,45 +190,45 @@ struct TransferInfo {
         return *this;
     }
 
-    static bool timeCmp(const TransferInfo &A,const TransferInfo &B) {
-        if(A.totalTime < B.totalTime) {
+    static bool timeCmp(const TransferInfo &A, const TransferInfo &B) {
+        if (A.totalTime < B.totalTime) {
             return true;
-        }else if(A.totalTime > B.totalTime) {
+        } else if (A.totalTime > B.totalTime) {
             return false;
         }
-        if(A.totalCost < B.totalCost) {
+        if (A.totalCost < B.totalCost) {
             return true;
-        }else if(A.totalCost > B.totalCost) {
+        } else if (A.totalCost > B.totalCost) {
             return false;
         }
-        if(A.firstTrain < B.firstTrain) {
+        if (A.firstTrain < B.firstTrain) {
             return true;
-        }else if(A.firstTrain > B.firstTrain) {
+        } else if (A.firstTrain > B.firstTrain) {
             return false;
         }
-        if(A.secondTrain < B.secondTrain) {
+        if (A.secondTrain < B.secondTrain) {
             return true;
         }
         return false;
     }
 
-    static bool costCmp(const TransferInfo &A,const TransferInfo &B) {
-        if(A.totalCost < B.totalCost) {
+    static bool costCmp(const TransferInfo &A, const TransferInfo &B) {
+        if (A.totalCost < B.totalCost) {
             return true;
-        }else if(A.totalCost > B.totalCost) {
+        } else if (A.totalCost > B.totalCost) {
             return false;
         }
-        if(A.totalTime < B.totalTime) {
+        if (A.totalTime < B.totalTime) {
             return true;
-        }else if(A.totalTime > B.totalTime) {
+        } else if (A.totalTime > B.totalTime) {
             return false;
         }
-        if(A.firstTrain < B.firstTrain) {
+        if (A.firstTrain < B.firstTrain) {
             return true;
-        }else if(A.firstTrain > B.firstTrain) {
+        } else if (A.firstTrain > B.firstTrain) {
             return false;
         }
-        if(A.secondTrain < B.secondTrain) {
+        if (A.secondTrain < B.secondTrain) {
             return true;
         }
         return false;
@@ -235,25 +237,27 @@ struct TransferInfo {
 
 class TrainSystem {
     friend class TicketSystem;
+
 private:
-    BPT<ull, int> TrainBase;//存储所有火车在TrainFile中的位置，无论发布与否
-    MemoryRiver<TrainInfo,1> TrainFile;//存储所有火车信息，无论发布与否
-    BPT<ull, StationValue> ReleasedTrainBase;//这个地方Key存什么似乎需要做一些变化
+    BPT<ull, int> TrainBase; //存储所有火车在TrainFile中的位置，无论发布与否
+    MemoryRiver<TrainInfo, 1> TrainFile; //存储所有火车信息，无论发布与否
+    BPT<ull, StationValue> ReleasedTrainBase; //这个地方Key存什么似乎需要做一些变化
     //ull是对被released的车的每一站做哈希
     int total = 0;
-    MemoryRiver<Seats,1> SeatFile;//存储卖出去的座位信息，以每日的一班车为单位（不可大于最大座位数）
+    MemoryRiver<Seats, 1> SeatFile; //存储卖出去的座位信息，以每日的一班车为单位（不可大于最大座位数）
     //rmk: 这里尝试维护一个变化信息：卖出去- 有人下车+
     const int MaxDays = 95;
 
 public:
-    TrainSystem():TrainBase("TrainBaseIndex","TrainBaseLeaf"),ReleasedTrainBase("ReleasedTrainBaseIndex","ReleasedTrainBaseLeaf") {
+    TrainSystem(): TrainBase("TrainBaseIndex", "TrainBaseLeaf"),
+                   ReleasedTrainBase("ReleasedTrainBaseIndex", "ReleasedTrainBaseLeaf") {
         TrainFile.initialise("train.txt");
         SeatFile.initialise("seat.txt");
-        TrainFile.get_info(total,1);
+        TrainFile.get_info(total, 1);
     }
 
     ~TrainSystem() {
-        TrainFile.write_info(total,1);
+        TrainFile.write_info(total, 1);
     }
 
     bool add_train(JaneZ::String<22> &trainID,
@@ -274,11 +278,11 @@ public:
 
     bool query_train(JaneZ::String<22> &trainID, JaneZ::Date &date);
 
-    int getSeats(Seats seat,int stIndex,int toIndex,int maxSeatsNUm);
+    int getSeats(Seats seat, int stIndex, int toIndex, int maxSeatsNUm);
 
     void query_ticket(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ::Date &d, JaneZ::SortType SortWay);
 
-    void printTransfer(JaneZ::String<42> &s, JaneZ::String<42> &t,TransferInfo &current);
+    void printTransfer(JaneZ::String<42> &s, JaneZ::String<42> &t, TransferInfo &current);
 
     void query_transfer(JaneZ::String<42> &s, JaneZ::String<42> &t, JaneZ::Date &d, JaneZ::SortType SortWay);
 

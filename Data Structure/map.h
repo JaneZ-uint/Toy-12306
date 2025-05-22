@@ -6,8 +6,9 @@
 #define MAP_H
 #include "../Data Structure/exceptions.h"
 #include "../Data Structure/utility.h"
+
 namespace sjtu {
-    template<class Key,class T,class Compare = std::less<Key> >
+    template<class Key, class T, class Compare = std::less<Key> >
     class map {
     public:
         typedef pair<const Key, T> value_type;

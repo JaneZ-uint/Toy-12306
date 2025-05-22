@@ -13,9 +13,9 @@ namespace JaneZ {
 
         Clock();
 
-        Clock(const Clock& other);
+        Clock(const Clock &other);
 
-        Clock(int h,int m);
+        Clock(int h, int m);
 
         Clock &operator=(const Clock &other);
 
@@ -39,13 +39,13 @@ namespace JaneZ {
     struct Date {
         int month;
         int day;
-        int months[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+        int months[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
         Date();
 
-        Date(const Date& other);
+        Date(const Date &other);
 
-        Date(int m,int d);
+        Date(int m, int d);
 
         Date &operator=(const Date &other);
 
@@ -61,13 +61,13 @@ namespace JaneZ {
 
         Date &operator++();
 
-        Date& operator--();
+        Date &operator--();
 
         int operator-(const Date &other) const;
 
         Date operator+(int days) const;
 
-        static Date addMinutesToDateTime(const Date& date, const Clock& clock, int minutes);
+        static Date addMinutesToDateTime(const Date &date, const Clock &clock, int minutes);
     };
 
     struct TrainTime {
@@ -76,9 +76,9 @@ namespace JaneZ {
 
         TrainTime() = default;
 
-        TrainTime(Date &d,Clock &c);
+        TrainTime(Date &d, Clock &c);
 
-        TrainTime& operator=(const TrainTime &other);
+        TrainTime &operator=(const TrainTime &other);
 
         bool operator==(const TrainTime &other) const;
 
@@ -90,24 +90,24 @@ namespace JaneZ {
 
         bool operator>=(const TrainTime &other) const;
 
-        static JaneZ::TrainTime AddMinutes(const JaneZ::TrainTime& time, int minutes);
+        static JaneZ::TrainTime AddMinutes(const JaneZ::TrainTime &time, int minutes);
 
         TrainTime operator+(int m);
 
         int operator-(const TrainTime &other) const;
     };
 
-    inline std::ostream& operator<<(std::ostream& os, const Clock& clock) {
+    inline std::ostream &operator<<(std::ostream &os, const Clock &clock) {
         os << (clock.hour < 10 ? "0" : "") << clock.hour << ":" << (clock.minute < 10 ? "0" : "") << clock.minute;
         return os;
     }
 
-    inline std::ostream& operator<<(std::ostream& os, const Date& date) {
+    inline std::ostream &operator<<(std::ostream &os, const Date &date) {
         os << (date.month < 10 ? "0" : "") << date.month << "-" << (date.day < 10 ? "0" : "") << date.day;
         return os;
     }
 
-    inline std::ostream& operator<<(std::ostream& os, const TrainTime& trainTime) {
+    inline std::ostream &operator<<(std::ostream &os, const TrainTime &trainTime) {
         os << trainTime.date << " " << trainTime.clock;
         return os;
     }

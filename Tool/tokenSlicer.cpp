@@ -4,11 +4,12 @@
 
 #include "tokenSlicer.h"
 
-TokenSlicer::TokenSlicer(std::string &s):op(s) {}
+TokenSlicer::TokenSlicer(std::string &s): op(s) {
+}
 
 int TokenSlicer::StringToInteger(std::string &s) {
     int result = 0;
-    for(int i = 0;i < s.size();i ++) {
+    for (int i = 0; i < s.size(); i++) {
         result = 10 * result + (s[i] - '0');
     }
     return result;
@@ -31,14 +32,14 @@ sjtu::vector<std::string> TokenSlicer::StringToVectorString(std::string &s) {
     int length = s.size();
     int i = 0;
     sjtu::vector<std::string> result;
-    while(i != length) {
-        if(s[i] == '|') {
-            ++ i;
+    while (i != length) {
+        if (s[i] == '|') {
+            ++i;
         }
         std::string tmp;
-        while(i != length && s[i] != '|') {
+        while (i != length && s[i] != '|') {
             tmp += s[i];
-            ++ i;
+            ++i;
         }
         result.push_back(tmp);
     }
@@ -49,14 +50,14 @@ sjtu::vector<int> TokenSlicer::StringToVectorInt(std::string &s) {
     int length = s.size();
     int i = 0;
     sjtu::vector<int> result;
-    while(i != length) {
-        if(s[i] == '|') {
-            ++ i;
+    while (i != length) {
+        if (s[i] == '|') {
+            ++i;
         }
         std::string tmp;
-        while(i != length && s[i] != '|') {
+        while (i != length && s[i] != '|') {
             tmp += s[i];
-            ++ i;
+            ++i;
         }
         result.push_back(StringToInteger(tmp));
     }
@@ -76,457 +77,458 @@ JaneZ::Clock TokenSlicer::StringToClock(std::string &s) {
     return current;
 }
 
-void TokenSlicer::SliceTokens(std::string &s,JaneZ::TotalInfo &info) {
+void TokenSlicer::SliceTokens(std::string &s, JaneZ::TotalInfo &info) {
     int length = s.size();
     int i = 0;
     std::string timeStamp;
-    while(s[i] != ' ') {   //跳过时间戳
-        if(s[i] != '[' && s[i] != ']') {
+    while (s[i] != ' ') {
+        //跳过时间戳
+        if (s[i] != '[' && s[i] != ']') {
             timeStamp += s[i];
         }
-        i ++;
+        i++;
     }
     int time = StringToInteger(timeStamp);
     info.timeStamp = time;
-    ++ i;
+    ++i;
     std::string operation;
-    while(i != length && s[i] != ' ') {
+    while (i != length && s[i] != ' ') {
         operation += s[i];
-        ++ i;
+        ++i;
     }
-    if(operation == "add_user") {
+    if (operation == "add_user") {
         info.a = JaneZ::add_user;
-        while(i != length) {
+        while (i != length) {
             std::string tmp;
-            if(s[i + 2] == 'c') {
+            if (s[i + 2] == 'c') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.cur_username = tmp;
-            }else if(s[i + 2] == 'u') {
+            } else if (s[i + 2] == 'u') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.username = tmp;
-            }else if(s[i + 2] == 'p') {
+            } else if (s[i + 2] == 'p') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.password = tmp;
-            }else if(s[i + 2] == 'n') {
+            } else if (s[i + 2] == 'n') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.name = tmp;
-            }else if(s[i + 2] == 'm') {
+            } else if (s[i + 2] == 'm') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.mail = tmp;
-            }else if(s[i + 2] == 'g') {
+            } else if (s[i + 2] == 'g') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.privilege = StringToInteger(tmp);
             }
         }
-    }else if(operation == "login") {
+    } else if (operation == "login") {
         info.a = JaneZ::login;
-        while(i != length) {
+        while (i != length) {
             std::string tmp;
-            if(s[i + 2] == 'u') {
+            if (s[i + 2] == 'u') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.username = tmp;
-            }else if(s[i + 2] == 'p') {
+            } else if (s[i + 2] == 'p') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.password = tmp;
             }
         }
-    }else if(operation == "logout") {
+    } else if (operation == "logout") {
         info.a = JaneZ::logout;
         i += 4;
         std::string tmp;
-        while(i != length && s[i] != ' ') {
+        while (i != length && s[i] != ' ') {
             tmp += s[i];
-            ++ i;
+            ++i;
         }
         info.username = tmp;
-    }else if(operation == "query_profile") {
+    } else if (operation == "query_profile") {
         info.a = JaneZ::query_profile;
-        while(i != length) {
+        while (i != length) {
             std::string tmp;
-            if(s[i + 2] == 'c') {
+            if (s[i + 2] == 'c') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.cur_username = tmp;
-            }else if(s[i + 2] == 'u') {
+            } else if (s[i + 2] == 'u') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.username = tmp;
             }
         }
-    }else if(operation == "modify_profile") {
+    } else if (operation == "modify_profile") {
         info.a = JaneZ::modify_profile;
         info.privilege = -1;
-        while(i != length) {
+        while (i != length) {
             std::string tmp;
-            if(s[i + 2] == 'c') {
+            if (s[i + 2] == 'c') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.cur_username = tmp;
-            }else if(s[i + 2] == 'u') {
+            } else if (s[i + 2] == 'u') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.username = tmp;
-            }else if(s[i + 2] == 'p') {
+            } else if (s[i + 2] == 'p') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.password = tmp;
-            }else if(s[i + 2] == 'n') {
+            } else if (s[i + 2] == 'n') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.name = tmp;
-            }else if(s[i + 2] == 'm') {
+            } else if (s[i + 2] == 'm') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.mail = tmp;
-            }else if(s[i + 2] == 'g') {
+            } else if (s[i + 2] == 'g') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.privilege = StringToInteger(tmp);
             }
         }
-    }else if(operation == "add_train") {
+    } else if (operation == "add_train") {
         info.a = JaneZ::add_train;
-        while(i != length) {
+        while (i != length) {
             std::string tmp;
-            if(s[i + 2] == 'i') {
+            if (s[i + 2] == 'i') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.ID = tmp;
-            }else if(s[i + 2] == 'n') {
+            } else if (s[i + 2] == 'n') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.StationNum = StringToInteger(tmp);
-            }else if(s[i + 2] == 'm') {
+            } else if (s[i + 2] == 'm') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.SeatNum = StringToInteger(tmp);
-            }else if(s[i + 2] == 's') {
+            } else if (s[i + 2] == 's') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.Stations = StringToVectorString(tmp);
-            }else if(s[i + 2] == 'p') {
+            } else if (s[i + 2] == 'p') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.prices = StringToVectorInt(tmp);
-            }else if(s[i + 2] == 'x') {
+            } else if (s[i + 2] == 'x') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.startTime = StringToClock(tmp);
-            }else if(s[i + 2] == 't') {
+            } else if (s[i + 2] == 't') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.travelTimes = StringToVectorInt(tmp);
-            }else if(s[i + 2] == 'o') {
+            } else if (s[i + 2] == 'o') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.stopoverTimes = StringToVectorInt(tmp);
-            }else if(s[i + 2] == 'd') {
+            } else if (s[i + 2] == 'd') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 sjtu::vector<std::string> tmpPair = StringToVectorString(tmp);
                 info.saleBeginDate = StringToDate(tmpPair[0]);
                 info.saleEndDate = StringToDate(tmpPair[1]);
-            }else if(s[i + 2] == 'y') {
+            } else if (s[i + 2] == 'y') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.Type = tmp[0];
             }
         }
-    }else if(operation == "delete_train") {
+    } else if (operation == "delete_train") {
         info.a = JaneZ::delete_train;
         i += 4;
         std::string tmp;
-        while(i != length && s[i] != ' ') {
+        while (i != length && s[i] != ' ') {
             tmp += s[i];
-            ++ i;
+            ++i;
         }
         info.ID = tmp;
-    }else if(operation == "release_train") {
+    } else if (operation == "release_train") {
         info.a = JaneZ::release_train;
         i += 4;
         std::string tmp;
-        while(i != length && s[i] != ' ') {
+        while (i != length && s[i] != ' ') {
             tmp += s[i];
-            ++ i;
+            ++i;
         }
         info.ID = tmp;
-    }else if(operation == "query_train") {
+    } else if (operation == "query_train") {
         info.a = JaneZ::query_train;
-        while(i != length) {
+        while (i != length) {
             std::string tmp;
-            if(s[i + 2] == 'i') {
+            if (s[i + 2] == 'i') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.ID = tmp;
-            }else if(s[i + 2] == 'd') {
+            } else if (s[i + 2] == 'd') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.BeginDate = StringToDate(tmp);
             }
         }
-    }else if(operation == "query_ticket") {
+    } else if (operation == "query_ticket") {
         info.a = JaneZ::query_ticket;
         info.SortWay = JaneZ::SortType::time;
-        while(i != length) {
+        while (i != length) {
             std::string tmp;
-            if(s[i + 2] == 's') {
+            if (s[i + 2] == 's') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.fromStation = tmp;
-            }else if(s[i + 2] == 't') {
+            } else if (s[i + 2] == 't') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.toStation = tmp;
-            }else if(s[i + 2] == 'd') {
+            } else if (s[i + 2] == 'd') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.SpecificStationDate = StringToDate(tmp);
-            }else if(s[i + 2] == 'p') {
+            } else if (s[i + 2] == 'p') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
-                if(tmp =="time") {
+                if (tmp == "time") {
                     info.SortWay = JaneZ::SortType::time;
-                }else {
+                } else {
                     info.SortWay = JaneZ::SortType::cost;
                 }
             }
         }
-    }else if(operation == "query_transfer") {
+    } else if (operation == "query_transfer") {
         info.a = JaneZ::query_transfer;
         info.SortWay = JaneZ::SortType::time;
-        while(i != length) {
+        while (i != length) {
             std::string tmp;
-            if(s[i + 2] == 's') {
+            if (s[i + 2] == 's') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.fromStation = tmp;
-            }else if(s[i + 2] == 't') {
+            } else if (s[i + 2] == 't') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.toStation = tmp;
-            }else if(s[i + 2] == 'd') {
+            } else if (s[i + 2] == 'd') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.SpecificStationDate = StringToDate(tmp);
-            }else if(s[i + 2] == 'p') {
+            } else if (s[i + 2] == 'p') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
-                if(tmp =="time") {
+                if (tmp == "time") {
                     info.SortWay = JaneZ::SortType::time;
-                }else {
+                } else {
                     info.SortWay = JaneZ::SortType::cost;
                 }
             }
         }
-    }else if(operation == "buy_ticket") {
+    } else if (operation == "buy_ticket") {
         info.a = JaneZ::buy_ticket;
         info.waitList = false;
-        while(i != length) {
+        while (i != length) {
             std::string tmp;
-            if(s[i + 2] == 'u') {
+            if (s[i + 2] == 'u') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.username = tmp;
-            }else if(s[i + 2] == 'i') {
+            } else if (s[i + 2] == 'i') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.ID = tmp;
-            }else if(s[i + 2] == 'd') {
+            } else if (s[i + 2] == 'd') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.SpecificStationDate = StringToDate(tmp);
-            }else if(s[i + 2] == 'n') {
+            } else if (s[i + 2] == 'n') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.buyNumber = StringToInteger(tmp);
-            }else if(s[i + 2] == 'f') {
+            } else if (s[i + 2] == 'f') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.fromStation = tmp;
-            }else if(s[i + 2] == 't') {
+            } else if (s[i + 2] == 't') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.toStation = tmp;
-            }else if(s[i + 2] == 'q') {
+            } else if (s[i + 2] == 'q') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
-                if(tmp == "true") {
+                if (tmp == "true") {
                     info.waitList = true;
-                }else {
+                } else {
                     info.waitList = false;
                 }
             }
         }
-    }else if(operation == "query_order") {
+    } else if (operation == "query_order") {
         info.a = JaneZ::query_order;
         i += 4;
         std::string tmp;
-        while(i != length && s[i] != ' ') {
+        while (i != length && s[i] != ' ') {
             tmp += s[i];
-            ++ i;
+            ++i;
         }
         info.username = tmp;
-    }else if(operation == "refund_ticket") {
+    } else if (operation == "refund_ticket") {
         info.a = JaneZ::refund_ticket;
         info.nOrder = 1;
-        while(i != length) {
+        while (i != length) {
             std::string tmp;
-            if(s[i + 2] == 'u') {
+            if (s[i + 2] == 'u') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.username = tmp;
-            }else if(s[i + 2] == 'n') {
+            } else if (s[i + 2] == 'n') {
                 i += 4;
-                while(i != length && s[i] != ' ') {
+                while (i != length && s[i] != ' ') {
                     tmp += s[i];
-                    ++ i;
+                    ++i;
                 }
                 info.nOrder = StringToInteger(tmp);
             }
         }
-    }else if(operation == "clean") {
+    } else if (operation == "clean") {
         info.a = JaneZ::clean;
-    }else if(operation == "exit") {
+    } else if (operation == "exit") {
         info.a = JaneZ::exit;
     }
 }

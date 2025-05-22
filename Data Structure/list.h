@@ -13,7 +13,9 @@ public:
         Node *next = nullptr;
         NodeType data;
 
-        Node(const NodeType &t):prev(nullptr),next(nullptr),data(t){}
+        Node(const NodeType &t): prev(nullptr), next(nullptr), data(t) {
+        }
+
         ~Node() {
             prev = nullptr;
             next = nullptr;
@@ -23,15 +25,17 @@ public:
     Node *head = nullptr;
     Node *tail = nullptr;
     size_t list_capacity;
+
 public:
-    list():head(nullptr),tail(nullptr),list_capacity(0){}
+    list(): head(nullptr), tail(nullptr), list_capacity(0) {
+    }
 
     ~list() {
         clear();
     }
 
     void clear() {
-        while(!empty()) {
+        while (!empty()) {
             pop_front();
         }
         head = nullptr;
@@ -43,21 +47,22 @@ public:
         Node *current = nullptr;
 
     public:
-        iterator(Node* t = nullptr):current(t){}
+        iterator(Node *t = nullptr): current(t) {
+        }
 
         ~iterator() {
             current = nullptr;
         }
 
-        NodeType& operator*() const {
+        NodeType &operator*() const {
             return current->data;
         }
 
-        NodeType* operator->() const {
+        NodeType *operator->() const {
             return &(current->data);
         }
 
-        iterator& operator++() {
+        iterator &operator++() {
             current = current->next;
             return *this;
         }
@@ -68,7 +73,7 @@ public:
             return tmp;
         }
 
-        iterator& operator--() {
+        iterator &operator--() {
             current = current->prev;
             return *this;
         }
@@ -79,15 +84,15 @@ public:
             return tmp;
         }
 
-        bool operator==(const iterator& other) const {
+        bool operator==(const iterator &other) const {
             return current == other.current;
         }
 
-        bool operator!=(const iterator& other) const {
+        bool operator!=(const iterator &other) const {
             return current != other.current;
         }
 
-        Node* get_node() const {
+        Node *get_node() const {
             return current;
         }
     };
@@ -95,6 +100,7 @@ public:
     iterator begin() {
         return iterator(head);
     }
+
     iterator end() {
         return iterator(nullptr);
     }
@@ -107,71 +113,71 @@ public:
         return list_capacity;
     }
 
-    NodeType& front() {
+    NodeType &front() {
         return head->data;
     }
 
-    NodeType& back() {
+    NodeType &back() {
         return tail->data;
     }
 
     void push_front(const NodeType &value) {
         Node *newNode = new Node(value);
-        if(head == nullptr) {
+        if (head == nullptr) {
             head = newNode;
             tail = newNode;
-        }else {
+        } else {
             newNode->next = head;
             head->prev = newNode;
             head = newNode;
         }
-        list_capacity ++;
+        list_capacity++;
     }
 
-    void push_back(const NodeType& value) {
+    void push_back(const NodeType &value) {
         Node *newNode = new Node(value);
-        if(tail == nullptr) {
+        if (tail == nullptr) {
             head = newNode;
             tail = newNode;
-        }else {
+        } else {
             newNode->prev = tail;
             tail->next = newNode;
             tail = newNode;
         }
-        list_capacity ++;
+        list_capacity++;
     }
 
     void pop_front() {
-        if(head == nullptr) {
+        if (head == nullptr) {
             return;
         }
         Node *tmp = head;
         head = head->next;
-        if(head) {
+        if (head) {
             head->prev = nullptr;
-        }else {
+        } else {
             tail = nullptr;
         }
         delete tmp;
-        list_capacity --;
+        list_capacity--;
     }
 
     void pop_back() {
-        if(tail == nullptr) {
+        if (tail == nullptr) {
             return;
         }
         Node *tmp = tail;
         tail = tail->prev;
-        if(tail) {
+        if (tail) {
             tail->next = nullptr;
-        }else {
+        } else {
             head = nullptr;
         }
         delete tmp;
-        list_capacity --;
+        list_capacity--;
     }
 
-    iterator insert(iterator pos, const NodeType& value) {
+    iterator insert(iterator pos, const NodeType &value) {
         if (pos == begin()) {
             push_front(value);
             return begin();
@@ -185,7 +191,7 @@ public:
             new_node->next = current;
             current->prev->next = new_node;
             current->prev = new_node;
-            list_capacity ++;
+            list_capacity++;
             return iterator(new_node);
         }
     }
@@ -207,60 +213,60 @@ public:
         current->prev = current->next = nullptr;
         delete current;
         current = nullptr;
-        list_capacity --;
+        list_capacity--;
         return next_iter;
     }
 
-    void splice(iterator pos, list& other, iterator it) {
+    void splice(iterator pos, list &other, iterator it) {
         if (it == other.end()) return;
-        Node* node = it.get_node();
+        Node *node = it.get_node();
         // 如果节点已经在目标位置，直接返回
         if (&other == this && node == pos.get_node()) return;
         //从other链表中移除
-        if(node->prev != nullptr) {
+        if (node->prev != nullptr) {
             node->prev->next = node->next;
-        }else {
+        } else {
             other.head = node->next;
         }
 
-        if(node->next != nullptr) {
+        if (node->next != nullptr) {
             node->next->prev = node->prev;
-        }else {
+        } else {
             other.tail = node->prev;
         }
-        other.list_capacity --;
+        other.list_capacity--;
 
         //插入当前链表
-        if(pos == begin()) {
+        if (pos == begin()) {
             node->prev = nullptr;
             node->next = head;
-            if(head) {
+            if (head) {
                 head->prev = node;
-            }else {
+            } else {
                 tail = node;
             }
             head = node;
-        }else if(pos == end()) {
+        } else if (pos == end()) {
             node->next = nullptr;
             node->prev = tail;
-            if(tail) {
+            if (tail) {
                 tail->next = node;
-            }else {
+            } else {
                 head = node;
             }
             tail = node;
-        }else {
+        } else {
             Node *current = pos.get_node();
             node->prev = current->prev;
             node->next = current;
-            if(current->prev) {
+            if (current->prev) {
                 current->prev->next = node;
-            }else {
+            } else {
                 head = node;
             }
             current->prev = node;
         }
-        list_capacity ++;
+        list_capacity++;
     }
 };
 

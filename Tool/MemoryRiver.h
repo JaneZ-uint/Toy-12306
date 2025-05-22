@@ -15,23 +15,26 @@ template<class T, int info_len = 2>
 class MemoryRiver {
     friend class Finance;
     friend class Blog;
+
 private:
     /* your code here */
     fstream file;
     string file_name;
     int sizeofT = sizeof(T);
+
 public:
     MemoryRiver() = default;
 
-    MemoryRiver(const string& file_name) : file_name(file_name) {}
+    MemoryRiver(const string &file_name) : file_name(file_name) {
+    }
 
     void initialise(string FN = "") {
         if (FN != "") file_name = FN;
-        file.open(file_name, std::ios::in|std::ios::out);
-        if(!file) {
+        file.open(file_name, std::ios::in | std::ios::out);
+        if (!file) {
             file.open(file_name, std::ios::out);
             int tmp = 0;
-            for (int i = 0; i < info_len; ++i){
+            for (int i = 0; i < info_len; ++i) {
                 file.write(reinterpret_cast<char *>(&tmp), sizeof(int));
             }
         }
@@ -50,7 +53,7 @@ public:
         if (n > info_len) return;
         file.open(file_name, std::fstream::in | std::fstream::out | std::fstream::binary);
         file.seekp((n - 1) * sizeof(int));
-        file.write(reinterpret_cast<char *>(&tmp), sizeof (int));
+        file.write(reinterpret_cast<char *>(&tmp), sizeof(int));
         file.close();
     }
 
@@ -73,7 +76,6 @@ public:
         file.clear();
         file.close();
     }
-
 };
 
 

@@ -9,7 +9,6 @@
 using ull = unsigned long long int;
 
 namespace JaneZ {
-
     template<size_t length>
     class Hash {
     public:
@@ -22,7 +21,6 @@ namespace JaneZ {
             return hash;
         }
     };
-
 }
 
 #endif //HASHFUNCTION_H

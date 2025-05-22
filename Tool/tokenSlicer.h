@@ -70,6 +70,7 @@ namespace JaneZ {
 class TokenSlicer {
 private:
     std::string op;
+
 public:
     TokenSlicer(std::string &s);
 
@@ -83,7 +84,7 @@ public:
 
     JaneZ::Clock StringToClock(std::string &s);
 
-    void SliceTokens(std::string &s,JaneZ::TotalInfo &info);
+    void SliceTokens(std::string &s, JaneZ::TotalInfo &info);
 };
 
 #endif //TOKENSLICER_H

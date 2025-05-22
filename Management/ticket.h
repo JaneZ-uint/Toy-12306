@@ -20,7 +20,7 @@ enum TicketPurchase {
 struct TicketInfo {
     JaneZ::String<22> username;
     JaneZ::String<22> trainID;
-    JaneZ::TrainTime leaveTime;//从当前站出发的时间
+    JaneZ::TrainTime leaveTime; //从当前站出发的时间
     JaneZ::String<42> startStation;
     int stIndex;
     JaneZ::String<42> endStation;
@@ -29,10 +29,11 @@ struct TicketInfo {
     int num = 0;
     int timeCost = 0;
     int ticketPrice;
-    int timeStamp;//维护时间戳
+    int timeStamp; //维护时间戳
     TicketPurchase status;
 
-    TicketInfo():num(0),timeCost(0){}
+    TicketInfo(): num(0), timeCost(0) {
+    }
 
     TicketInfo(const TicketInfo &other) = default;
 
@@ -61,11 +62,11 @@ struct WaitTicket {
     JaneZ::String<22> trainID;
     JaneZ::Date StartDay;
 
-    bool operator==(const WaitTicket& other) const{
+    bool operator==(const WaitTicket &other) const {
         return trainID == other.trainID && StartDay == other.StartDay;
     }
 
-    bool operator<(const WaitTicket& other) const{
+    bool operator<(const WaitTicket &other) const {
         if (trainID < other.trainID) {
             return true;
         }
@@ -75,7 +76,7 @@ struct WaitTicket {
         return false;
     }
 
-    bool operator>(const WaitTicket& other) const{
+    bool operator>(const WaitTicket &other) const {
         if (trainID > other.trainID) {
             return true;
         }
@@ -89,29 +90,31 @@ struct WaitTicket {
 class TicketSystem {
     friend class TrainSystem;
     friend class UserSystem;
+
 private:
-    BPT<ull, TicketInfo> FormalList;//所有订单（包括候补在内）
-    BPT<WaitTicket, TicketInfo> WaitList;//候补订单
+    BPT<ull, TicketInfo> FormalList; //所有订单（包括候补在内）
+    BPT<WaitTicket, TicketInfo> WaitList; //候补订单
 
 public:
-    TicketSystem():FormalList("FormalListIndex","FormalListLeaf"),WaitList("WaitListIndex","WaitListLeaf"){}
+    TicketSystem(): FormalList("FormalListIndex", "FormalListLeaf"), WaitList("WaitListIndex", "WaitListLeaf") {
+    }
 
     ~TicketSystem() = default;
 
     void buy_ticket(JaneZ::String<22> &username,
-                        JaneZ::String<22> &trainID,
-                        JaneZ::Date &day,
-                        int num,
-                        JaneZ::String<42> &startStation,
-                        JaneZ::String<42> &endStation,
-                        bool waitList,
-                        TrainSystem &train_system,
-                        UserSystem &user_system,
-                        int timeStamp);
+                    JaneZ::String<22> &trainID,
+                    JaneZ::Date &day,
+                    int num,
+                    JaneZ::String<42> &startStation,
+                    JaneZ::String<42> &endStation,
+                    bool waitList,
+                    TrainSystem &train_system,
+                    UserSystem &user_system,
+                    int timeStamp);
 
-    void query_order(JaneZ::String<22> &username,UserSystem &user_system,TrainSystem &train_system);
+    void query_order(JaneZ::String<22> &username, UserSystem &user_system, TrainSystem &train_system);
 
-    bool refund_ticket(JaneZ::String<22> &username,int n,UserSystem &user_system,TrainSystem &train_system);
+    bool refund_ticket(JaneZ::String<22> &username, int n, UserSystem &user_system, TrainSystem &train_system);
 
     static void clean() {
         // 删除正式列表的索引和叶子文件
