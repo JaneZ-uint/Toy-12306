@@ -3,10 +3,10 @@
 #include <fcntl.h>
 #include <io.h>
 
-#include "Management/ticket.h"
-#include "Management/train.h"
-#include "Management/user.h"
-#include "Tool/tokenSlicer.h"
+#include "include/ticket.h"
+#include "include/train.h"
+#include "include/user.h"
+#include "include/tokenSlicer.h"
 
 int main() {
     std::string op;

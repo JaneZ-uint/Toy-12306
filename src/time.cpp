@@ -2,7 +2,7 @@
 // Created by JaneZ on 2025/5/5.
 //
 
-#include "../Management/time.h"
+#include "../include/time.h"
 
 JaneZ::Clock::Clock() {
     hour = 0;

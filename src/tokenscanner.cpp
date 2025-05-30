@@ -2,7 +2,7 @@
 // Created by JaneZ on 2025/5/5.
 //
 
-#include "tokenscanner.h"
+#include "../include/tokenscanner.h"
 
 bool TokenScanner::checkLetter(char a) {
     if ('A' <= a && a <= 'Z') {

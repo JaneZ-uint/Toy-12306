@@ -4,7 +4,7 @@
 
 #ifndef HASHFUNCTION_H
 #define HASHFUNCTION_H
-#include "../Data Structure/String.h"
+#include "String.h"
 
 using ull = unsigned long long int;
 

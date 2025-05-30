@@ -6,9 +6,9 @@
 #define TOKENSLICER_H
 #include <string>
 #include "HashFunction.h"
-#include "../Data Structure/String.h"
-#include "../Data Structure/vector.h"
-#include "../Management/time.h"
+#include "String.h"
+#include "vector.h"
+#include "../include/time.h"
 
 namespace JaneZ {
     enum opType {

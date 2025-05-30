@@ -3,28 +3,24 @@ project(Toy12306)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(code main.cpp
-        "Data Structure/BPT.h"
-        "Data Structure/vector.h"
-        "Data Structure/list.h"
-        "Data Structure/LRUCache.h"
-        "Data Structure/exceptions.h"
-        Management/ticket.cpp
-        Management/ticket.h
-        Management/train.cpp
-        Management/train.h
-        Tool/tokenscanner.h
-        Tool/tokenscanner.cpp
-        Management/user.cpp
-        Management/user.h
-        "Data Structure/String.h"
-        Management/time.h
-        Management/time.cpp
-        Tool/HashFunction.h
-        "Data Structure/map.h"
-        Tool/tokenSlicer.h
-        Tool/tokenSlicer.cpp
-        "Data Structure/utility.h"
-        Tool/MemoryRiver.h
-        "Data Structure/priority_queue.h"
+add_executable(Toy12306 main.cpp
+        include/exceptions.h
+        include/list.h
+        include/map.h
+        include/priority_queue.h
+        include/String.h
+        include/utility.h
+        include/ticket.h
+        include/time.h
+        include/time.h
+        include/HashFunction.h
+        include/MemoryRiver.h
+        include/tokenscanner.h
+        include/tokenSlicer.h
+        src/ticket.cpp
+        src/time.cpp
+        src/train.cpp
+        src/user.cpp
+        src/tokenscanner.cpp
+        src/tokenSlicer.cpp
 )

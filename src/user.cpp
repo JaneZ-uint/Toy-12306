@@ -2,7 +2,7 @@
 // Created by JaneZ on 2025/5/5.
 //
 using ull = unsigned long long int;
-#include "user.h"
+#include "../include/user.h"
 
 bool UserSystem::add_user(JaneZ::String<22> &currentUsername, JaneZ::String<22> &username, JaneZ::String<32> &password,
                           JaneZ::String<22> &name, JaneZ::String<32> &mailAddr, int privilege) {

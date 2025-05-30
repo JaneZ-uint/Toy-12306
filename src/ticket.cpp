@@ -2,11 +2,11 @@
 // Created by JaneZ on 2025/5/5.
 //
 
-#include "ticket.h"
+#include "../include/ticket.h"
 
-#include "train.h"
-#include "user.h"
-#include "../Tool/tokenSlicer.h"
+#include "../include/train.h"
+#include "../include/user.h"
+#include "../include/tokenSlicer.h"
 
 using ull = unsigned long long int;
 

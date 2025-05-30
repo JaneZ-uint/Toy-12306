@@ -2,7 +2,7 @@
 // Created by JaneZ on 2025/5/8.
 //
 
-#include "tokenSlicer.h"
+#include "../include/tokenSlicer.h"
 
 TokenSlicer::TokenSlicer(std::string &s): op(s) {
 }

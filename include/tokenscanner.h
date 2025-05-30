@@ -4,8 +4,8 @@
 
 #ifndef TOKENSCANNER_H
 #define TOKENSCANNER_H
-#include "../Data Structure/String.h"
-#include "../Data Structure/vector.h"
+#include "String.h"
+#include "vector.h"
 
 /*
  * This is a class that will never be used.

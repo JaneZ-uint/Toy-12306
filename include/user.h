@@ -4,11 +4,11 @@
 
 #ifndef USER_H
 #define USER_H
-#include "../Data Structure/String.h"
-#include "../Data Structure/BPT.h"
-#include "../Data Structure/map.h"
-#include "../Tool/HashFunction.h"
-#include "../Tool/MemoryRiver.h"
+#include "String.h"
+#include "BPT.h"
+#include "map.h"
+#include "HashFunction.h"
+#include "../include/MemoryRiver.h"
 
 using ull = unsigned long long int;
 

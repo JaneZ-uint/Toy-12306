@@ -3,10 +3,10 @@
 //
 
 #include <iostream>
-#include "train.h"
-
-#include "../Data Structure/priority_queue.h"
-#include "../Tool/HashFunction.h"
+#include "../include/train.h"
+#include "../include/time.h"
+#include "../include/priority_queue.h"
+#include "../include/HashFunction.h"
 using ull = unsigned long long int;
 
 bool TrainSystem::add_train(JaneZ::String<22> &trainID, int stationNum, int seatNum,

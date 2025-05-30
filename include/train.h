@@ -4,13 +4,13 @@
 
 #ifndef TRAIN_H
 #define TRAIN_H
-#include "../Data Structure/BPT.h"
-#include "../Data Structure/String.h"
-#include "../Data Structure/vector.h"
-#include "../Management/time.h"
-#include "../Tool/HashFunction.h"
-#include "../Tool/tokenSlicer.h"
-#include "../Tool/MemoryRiver.h"
+#include "BPT.h"
+#include "String.h"
+#include "vector.h"
+#include "../include/time.h"
+#include "../include/HashFunction.h"
+#include "../include/tokenSlicer.h"
+#include "../include/MemoryRiver.h"
 
 using ull = unsigned long long int;
 

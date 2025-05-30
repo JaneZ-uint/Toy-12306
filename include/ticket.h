@@ -6,10 +6,10 @@
 #define TICKET_H
 #include "train.h"
 #include "user.h"
-#include "../Data Structure/BPT.h"
-#include "../Management/time.h"
-#include "../Data Structure/String.h"
-#include "../Tool/HashFunction.h"
+#include "../include/BPT.h"
+#include "../include/time.h"
+#include "String.h"
+#include "../include/HashFunction.h"
 
 using ull = unsigned long long int;
 
